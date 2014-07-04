@@ -12,7 +12,7 @@ var program = require( 'commander' ),
 
 program
     .version( packageInfo.version )
-    .usage( '[command] [options]' )
+    .usage( '[options]' )
     .option( '-c, --config [name]', 'set the config name to use, default is "dev"', 'dev' );
 
 
@@ -21,5 +21,16 @@ var config = util.getConfig( program.config );
 process.title = config.processTitle;
 registry.set( 'config', config );
 
+var db = require( './lib/db' );
 
-require( './lib/webServer' );
+
+db.connect( config.mongodb, {}, function( error ){
+    if ( error ){
+        console.log( error );
+        process.abort();
+    }
+    else {
+        registry.set( 'db', db );
+        require( './lib/webServer' );
+    }
+});

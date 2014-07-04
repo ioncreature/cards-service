@@ -1,0 +1,2 @@
+call mongod --logpath "C:\Program Files\MongoDB 2.6 Standard\bin\mongo.log" --install --port 27017 --bind_ip 127.0.0.1 --logappend --directoryperdb --dbpath "C:\Program Files\MongoDB 2.6 Standard\bin" --serviceName MongoDB
+net start MongoDB
