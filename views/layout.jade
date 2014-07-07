@@ -11,7 +11,9 @@ html(lang='en')
         link(href='public/css/all.css', rel='stylesheet')
         block styles
     body
-        block content
+        include include/navbar
+        #main-content.container
+            block content
         script(src='public/bower/jquery/dist/jquery.min.js')
         script(src='public/bower/bootstrap/dist/js/bootstrap.min.js')
         block scripts
