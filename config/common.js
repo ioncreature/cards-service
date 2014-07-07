@@ -15,6 +15,7 @@ exports.route = {
     CARD_PAGE: '/cards/:id',
     ISSUERS_PAGE: '/issuers',
     ISSUER_PAGE: '/issuers/:id',
+    NEW_ISSUER_PAGE: '/issuers/new',
     LOGIN: '/login',
     LOGOUT: '/logout',
 

@@ -1,0 +1,23 @@
+// @author Alexander Marenin
+// @date July 2014
+
+extends ../layout
+
+block header-buttons
+    a.btn.btn-default(href=route.NEW_ISSUER_PAGE)
+        span.glyphicon.glyphicon-plus
+        | Add issuer
+
+block content
+    .table-responsive
+        table.table.table-striped
+            tr
+                th Name
+                th City
+                th Show
+            each issuer in issuers
+                tr
+                    td=issuer.name
+                    td=issuer.city
+                    td:a(href=formatUrl(route.ISSUER_PAGE, {id: issuer._id})) show
+

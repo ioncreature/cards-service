@@ -1,0 +1,19 @@
+// @author Alexander Marenin
+// @date July 2014
+
+extends ../layout
+
+block content
+    .table-responsive
+        table.table.table-striped
+            tr
+                th City
+                th Issuer
+                th Is full
+                th Edit
+            each card in cards
+                tr
+                    td=card.city
+                    td=card.issuerName
+                    td=card.full
+                    td:a(href=formatUrl(route.CARD_PAGE, {id: card._id})) edit

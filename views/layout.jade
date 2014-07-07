@@ -1,4 +1,4 @@
-// @author Marenin Alexander
+// @author Alexander Marenin
 // @date July 2014
 
 doctype html
@@ -8,13 +8,17 @@ html(lang='en')
         meta(charset='utf-8')
         meta(http-equiv='X-UA-Compatible', content='IE=edge')
         meta(name='viewport', content='width=device-width, initial-scale=1')
-        link(href='public/css/all.css', rel='stylesheet')
+        link(href='/public/css/all.css', rel='stylesheet')
         block styles
     body
         include include/navbar
         #main-content.container
-            h2=pageTitle
+            .row
+                .col-md-6
+                    h2=pageTitle
+                .col-md-6.buttons-block
+                    block header-buttons
             block content
-        script(src='public/bower/jquery/dist/jquery.min.js')
-        script(src='public/bower/bootstrap/dist/js/bootstrap.min.js')
+        script(src='/public/bower/jquery/dist/jquery.min.js')
+        script(src='/public/bower/bootstrap/dist/js/bootstrap.min.js')
         block scripts
