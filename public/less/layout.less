@@ -10,6 +10,10 @@
     border: 0;
     font-family: 'Open Sans Condensed', 'Open Sans Light', Tahoma;
 
+    a {
+        color: @color-north-sea;
+    }
+
     a#logo {
         font-size: 2.1em;
     }
@@ -17,5 +21,19 @@
     #main-nav {
         font-size: 1.4em;
         border: 0;
+
+        ul {
+            margin-bottom: 0;
+        }
+
+        li > a {
+            padding-top: 18px;
+            padding-bottom: 18px;
+            margin-bottom: 0px;
+        }
+
+        li.active > a{
+            background-color: @color-platinum;
+        }
     }
 }

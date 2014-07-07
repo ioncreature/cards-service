@@ -11,11 +11,15 @@ exports.route = {
     PUBLIC_CSS: '/public/css',
 
     INDEX: '/',
+    CARDS_PAGE: '/cards',
+    CARD_PAGE: '/cards/:id',
+    ISSUERS_PAGE: '/issuers',
+    ISSUER_PAGE: '/issuers/:id',
     LOGIN: '/login',
     LOGOUT: '/logout',
 
     // REST API
-    API: '/api',
+    API_PREFIX: '/api',
     API_INFO: '/',
     CARDS: '/card',
     CARD: '/card/:id',
