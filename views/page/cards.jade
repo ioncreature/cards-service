@@ -12,8 +12,14 @@ block content
                 th Is full
                 th Edit
             each card in cards
+                - var cardUrl = formatUrl( route.CARD_PAGE, {id: card._id} )
                 tr
-                    td=card.city
-                    td=card.issuerName
-                    td=card.full
-                    td:a(href=formatUrl(route.CARD_PAGE, {id: card._id})) edit
+                    td= card.city
+                    td= card.issuerName
+                    td
+                        if card.full
+                            span.glyphicon.glyphicon-plus
+                        else
+                            span.glyphicon.glyphicon-minus
+                    td
+                        a(href=cardUrl) edit

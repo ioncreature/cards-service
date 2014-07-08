@@ -15,7 +15,7 @@ block content
                 th Phone
                 th URL
             each issuer in issuers
-                - issuerUrl = formatUrl( route.ISSUER_PAGE, {id: issuer._id} )
+                - var issuerUrl = formatUrl( route.ISSUER_PAGE, {id: issuer._id} )
                 tr
                     td
                         a(href=issuerUrl)= issuer.name

@@ -16,6 +16,8 @@ exports.route = {
     ISSUERS_PAGE: '/issuers',
     ISSUER_PAGE: '/issuers/:id',
     NEW_ISSUER_PAGE: '/issuers/new',
+    USERS_PAGE: '/users',
+    USER_PAGE: '/users/:id',
     LOGIN: '/login',
     LOGOUT: '/logout',
 

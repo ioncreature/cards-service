@@ -8,6 +8,8 @@ var router = require( 'express' ).Router(),
     route = registry.get( 'config' ).route,
     db = registry.get( 'db' ),
     issuers = require( './issuers' ),
+    users = require( './users' ),
+    cards = require( './cards' ),
     Card = db.Card,
     CardType = db.CardType,
     ObjectId = db.ObjectId;
@@ -22,28 +24,11 @@ router.get( route.INDEX, function( req, res ){
     });
 });
 
+router.get( route.CARDS_PAGE, cards.getCards );
+router.get( route.CARD_PAGE, cards.getCard );
 
-router.get( route.CARDS_PAGE, function( req, res, next ){
-    Card.find( function( error, cards ){
-        if ( error )
-            next( error );
-        else
-            res.render( 'page/cards', {
-                pageName: 'cards',
-                pageTitle: 'Cards list',
-                cards: cards
-            });
-    });
-});
-
-
-router.get( route.CARD_PAGE, function( req, res ){
-    res.render( 'page/index', {
-        pageName: 'cards',
-        pageTitle: 'card'
-    });
-});
-
+router.get( route.USERS_PAGE, users.getUsers );
+router.get( route.USER_PAGE, users.getUser );
 
 router.get( route.ISSUERS_PAGE, issuers.getIssuers );
 router.get( route.NEW_ISSUER_PAGE, issuers.getNewIssuer );

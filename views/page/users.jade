@@ -1,0 +1,19 @@
+// @author Alexander Marenin
+// @date July 2014
+
+extends ../layout
+
+block content
+    .table-responsive
+        table.table.table-striped
+            tr
+                th ID
+                th Source
+                th External ID
+            each user in users
+                - var userUrl = formatUrl(route.USER_PAGE, {id: user._id})
+                tr
+                    td
+                        a(href=userUrl)= user._id
+                    td= user.source
+                    td= user.externalId

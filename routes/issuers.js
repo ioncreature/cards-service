@@ -8,11 +8,9 @@ var registry = require( '../lib/registry' ),
     db = registry.get( 'db' ),
     async = require( 'async' ),
     util = require( '../lib/util' ),
-    Card = db.Card,
     CardType = db.CardType,
     Issuer = db.Issuer,
     ObjectId = db.ObjectId;
-
 
 
 exports.getIssuers = function( req, res, next ){
