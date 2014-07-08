@@ -13,11 +13,9 @@ html(lang='en')
     body
         include include/navbar
         #main-content.container
-            .row
-                .col-md-6
-                    h2=pageTitle
-                .col-md-6.buttons-block
-                    block header-buttons
+            .buttons-block
+                h2=pageTitle
+                block header-buttons
             block content
         script(src='/public/bower/jquery/dist/jquery.min.js')
         script(src='/public/bower/bootstrap/dist/js/bootstrap.min.js')

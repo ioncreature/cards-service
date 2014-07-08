@@ -4,20 +4,23 @@
 extends ../layout
 
 block header-buttons
-    a.btn.btn-default(href=route.NEW_ISSUER_PAGE)
-        span.glyphicon.glyphicon-plus
-        | Add issuer
+    a.btn.btn-default(href=route.NEW_ISSUER_PAGE) Add issuer
 
 block content
     .table-responsive
         table.table.table-striped
             tr
                 th Name
-                th City
-                th Show
+                th Description
+                th Phone
+                th URL
             each issuer in issuers
+                - issuerUrl = formatUrl( route.ISSUER_PAGE, {id: issuer._id} )
                 tr
-                    td=issuer.name
-                    td=issuer.city
-                    td:a(href=formatUrl(route.ISSUER_PAGE, {id: issuer._id})) show
+                    td
+                        a(href=issuerUrl)= issuer.name
+                    td= String(issuer.description).slice( 0, 80 )
+                    td= issuer.phone || '-'
+                    td
+                        a(href=issuer.url, target='_blank')= issuer.url
 
