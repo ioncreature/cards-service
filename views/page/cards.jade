@@ -3,9 +3,12 @@
 
 extends ../layout
 
+block header-buttons
+    a.btn.btn-default(href=route.NEW_CARD_PAGE) Add card
+
 block content
     .table-responsive
-        table.table.table-striped
+        table.table.table-striped.table-hover
             tr
                 th City
                 th Issuer

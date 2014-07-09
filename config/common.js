@@ -12,6 +12,7 @@ exports.route = {
 
     INDEX: '/',
     CARDS_PAGE: '/cards',
+    NEW_CARD_PAGE: '/cards/new',
     CARD_PAGE: '/cards/:id',
     ISSUERS_PAGE: '/issuers',
     ISSUER_PAGE: '/issuers/:id',
@@ -26,6 +27,9 @@ exports.route = {
     API_INFO: '/',
     CARDS: '/card',
     CARD: '/card/:id',
+    CARD_IMAGE: '/card/:id/image/:imgId',
+    CARD_TYPES: '/card-type',
+    CARD_TYPE: '/card-type/:id',
     ISSUERS: '/issuer',
     ISSUER: '/issuer/:id'
 };

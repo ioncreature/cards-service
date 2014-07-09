@@ -36,6 +36,31 @@
             background-color: @color-platinum;
         }
     }
+
+    &.users {
+        background-color: @color-bg-light-orange;
+        #main-nav li.active > a, button.navbar-toggle {
+            background-color: darken(@color-bg-light-orange, 10%);
+        }
+    }
+    &.issuers {
+        background-color: @color-bg-light-green;
+        #main-nav li.active > a, button.navbar-toggle {
+            background-color: darken(@color-bg-light-green, 10%);
+        }
+    }
+    &.cards {
+        background-color: @color-bg-light-blue2;
+        #main-nav li.active > a, button.navbar-toggle {
+            background-color: darken(@color-bg-light-blue2, 10%);
+        }
+    }
+    &.error {
+        background-color: @color-bg-light-red;
+        #main-nav li.active > a, button.navbar-toggle {
+            background-color: darken(@color-bg-light-red, 10%);
+        }
+    }
 }
 
 #main-content {

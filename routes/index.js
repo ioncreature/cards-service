@@ -25,7 +25,10 @@ router.get( route.INDEX, function( req, res ){
 });
 
 router.get( route.CARDS_PAGE, cards.getCards );
+router.get( route.NEW_CARD_PAGE, cards.getNewCard );
+router.post( route.NEW_CARD_PAGE, cards.createCard );
 router.get( route.CARD_PAGE, cards.getCard );
+router.post( route.CARD_PAGE, cards.updateCard );
 
 router.get( route.USERS_PAGE, users.getUsers );
 router.get( route.USER_PAGE, users.getUser );

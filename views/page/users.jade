@@ -5,9 +5,10 @@ extends ../layout
 
 block content
     .table-responsive
-        table.table.table-striped
+        table.table.table-striped.table-hover
             tr
                 th ID
+                th Name
                 th Source
                 th External ID
             each user in users
@@ -15,5 +16,6 @@ block content
                 tr
                     td
                         a(href=userUrl)= user._id
+                    td= user.name
                     td= user.source
                     td= user.externalId

@@ -12,14 +12,18 @@ $( function(){
     addCardTypeEl.click( function( e ){
         e.preventDefault();
         e.stopPropagation();
-
-        var block = createCardTypeBlock( ++index );
-        cardTypesEl.append( block );
-        block.find( 'input' ).focus();
+        addCardType( true );
     });
 
-    addCardTypeEl.click();
+    addCardType();
+    $( '#issuer-name' ).focus();
 
+
+    function addCardType( focus ){
+        var block = createCardTypeBlock( ++index );
+        cardTypesEl.append( block );
+        focus && block.find( 'input' ).focus();
+    }
 
     function createCardTypeBlock( index ){
         var block = [
