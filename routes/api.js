@@ -12,6 +12,7 @@ var router = require( 'express' ).Router(),
     db = registry.get( 'db' ),
     Issuer = db.Issuer,
     CardType = db.CardType,
+    Card = db.Card,
     ObjectId = db.ObjectId;
 
 module.exports = router;
@@ -54,7 +55,7 @@ router.get( route.CARD_TYPES, function( req, res, next ){
         options = {};
 
     if ( issuerId && ObjectId.isValid(issuerId) )
-        options.issuerId = issuerId;
+        conditions.issuerId = issuerId;
 
     CardType.find( conditions, null, options, function( error, docs ){
         if ( error )
@@ -65,6 +66,37 @@ router.get( route.CARD_TYPES, function( req, res, next ){
 });
 
 
+router.get( route.CARD_IMAGE, function( req, res, next ){
+    var id = req.params.id,
+        field = req.params.type === 'front' ? 'imgFront' : 'imgBack';
+
+    if ( ObjectId.isValid(id) ){
+        id = new ObjectId( id );
+        Card.findById( id, field, function( error, card ){
+            var e;
+            if ( error )
+                next( error );
+            else if ( !card ){
+                e = new Error( 'Card with ID "' + util.stripTags( id ) + '" not found' );
+                e.status = 404;
+                next( e );
+            }
+            else if ( !card[field] ){
+                e = new Error( 'Card with ID "' + util.stripTags( id ) + '" not found' );
+                e.status = 404;
+                next( e );
+            }
+            else {
+                res.contentType( card[field].mimeType );
+                res.send( card[field].data );
+            }
+        });
+    }
+    else
+        next( new Error('Incorrect card ID "' + util.stripTags(id) + '"') );
+});
+
+
 router.use( function( req, res, next ){
     var error = new Error( 'Not Found' );
     error.status = 404;
@@ -72,8 +104,8 @@ router.use( function( req, res, next ){
 });
 
 
-router.use( function( err, req, res, next ){
-    res.json( err.status || 500, {
+router.use( function( error, req, res, next ){
+    res.json( error.status || 500, {
         error: error.message,
         status: error.status || '',
         stack: config.debug ? error.stack : ''

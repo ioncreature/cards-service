@@ -4,10 +4,25 @@
  */
 
 $( function(){
-    var form = $( '#addIssuer' ),
+    var form = $( 'form#issuer' ),
+        nameEl = $( 'input[name=name]' ),
+        nameContainer = $( '#issuer-name-container' ),
         cardTypesEl = $( '#cardTypes' ),
         addCardTypeEl = $( '#addType' ),
         index = 100;
+
+    addCardType();
+    $( '#issuer-name' ).focus();
+
+
+    form.submit( function( e ){
+        if ( !nameEl.val() ){
+            nameContainer.addClass( 'has-error' );
+            e.preventDefault();
+            return false;
+        }
+    });
+
 
     addCardTypeEl.click( function( e ){
         e.preventDefault();
@@ -15,8 +30,6 @@ $( function(){
         addCardType( true );
     });
 
-    addCardType();
-    $( '#issuer-name' ).focus();
 
 
     function addCardType( focus ){

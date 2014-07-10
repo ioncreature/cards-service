@@ -10,19 +10,22 @@ block content
     .table-responsive
         table.table.table-striped.table-hover
             tr
+                th Name
                 th City
-                th Issuer
+                th Issuer Name
+                th Card Type
                 th Is full
-                th Edit
             each card in cards
                 - var cardUrl = formatUrl( route.CARD_PAGE, {id: card._id} )
-                tr
-                    td= card.city
+                tr(class=card.full ? 'success' : '')
+                    td
+                        a(href=cardUrl)= (card.name || '---')
+                    td
+                        a(href=cardUrl)= (card.city || '---')
                     td= card.issuerName
+                    td= card.typeName
                     td
                         if card.full
                             span.glyphicon.glyphicon-plus
                         else
                             span.glyphicon.glyphicon-minus
-                    td
-                        a(href=cardUrl) edit

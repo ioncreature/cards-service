@@ -5,6 +5,7 @@
 
 exports.title = 'Cards Service';
 exports.processTitle = 'cards-service';
+exports.uploadsDir = require( 'path' ).join( __dirname, '..', 'uploads' );
 
 exports.route = {
     PUBLIC: '/public',
@@ -27,7 +28,7 @@ exports.route = {
     API_INFO: '/',
     CARDS: '/card',
     CARD: '/card/:id',
-    CARD_IMAGE: '/card/:id/image/:imgId',
+    CARD_IMAGE: '/card/:id/img/:type',
     CARD_TYPES: '/card-type',
     CARD_TYPE: '/card-type/:id',
     ISSUERS: '/issuer',

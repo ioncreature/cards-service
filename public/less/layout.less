@@ -38,27 +38,29 @@
     }
 
     &.users {
-        background-color: @color-bg-light-orange;
-        #main-nav li.active > a, button.navbar-toggle {
-            background-color: darken(@color-bg-light-orange, 10%);
-        }
+        .colorize-menu( @color-bg-light-orange );
     }
     &.issuers {
-        background-color: @color-bg-light-green;
-        #main-nav li.active > a, button.navbar-toggle {
-            background-color: darken(@color-bg-light-green, 10%);
-        }
+        .colorize-menu( @color-bg-light-green );
     }
     &.cards {
-        background-color: @color-bg-light-blue2;
-        #main-nav li.active > a, button.navbar-toggle {
-            background-color: darken(@color-bg-light-blue2, 10%);
-        }
+        .colorize-menu( @color-bg-light-blue2 );
     }
     &.error {
-        background-color: @color-bg-light-red;
+        .colorize-menu( @color-bg-light-red );
+    }
+
+    .colorize-menu( @color ){
+        background-color: @color;
+        a {
+            color: darken(@color, 50%);
+        }
         #main-nav li.active > a, button.navbar-toggle {
-            background-color: darken(@color-bg-light-red, 10%);
+            background-color: darken(@color, 10%);
+            border-color: darken(@color, 25%);
+            span {
+                background-color: darken(@color, 45%);
+            }
         }
     }
 }
@@ -78,5 +80,15 @@
             margin-bottom: 10px;
             float: right;
         }
+    }
+}
+
+
+#error-message {
+    text-align: center;
+    padding: 2em 0;
+    span {
+        font-size: 10em;
+        color: darken(@color-bg-light-red, 20%);
     }
 }

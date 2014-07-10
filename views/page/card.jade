@@ -8,36 +8,40 @@ block scripts
     script(src='/public/js/cardPage.js')
 
 block content
-    form#addCard(role='form', method='POST', action=postUrl)
+    form#card(role='form', method='POST', action=postUrl, enctype='multipart/form-data')
         .row
             .col-md-4
                 h3 Information
                 .form-group
-                    label(for='card-name') Card name
-                    input#issuer-name.form-control(type='text', name='name', value=name)
+                    label(for='card-name') Name
+                    input#card-name.form-control(type='text', name='name', value=name)
                 .form-group
-                    label(for='issuer-name') Issuer name
-                    input#issuer-name.form-control(type='text', name='issuerName', value=issuerName)
+                    label(for='card-city') City
+                    input#card-city.form-control(type='text', name='city', value=city)
                 .form-group
-                    label(for='type-name') Card Type
-                    input#type-name.form-control(type='text', name='typeName', value=typeName)
+                    label(for='issuer-id') Issuer
+                    select.form-control(name='issuerId')
+                        option(value='', disabled, selected) ---
+                        each issuer in issuers
+                            - var selected = String( issuer._id ) === String( issuerId )
+                            option(value=issuer._id, selected=selected)= issuer.name
                 .form-group
-                    label(for='card-user') User ID
-                    input#card-user.form-control(type='text', name='userId', value=userId)
-
+                    label(for='type-id') Card Type
+                    select.form-control(name='typeId')
+                        option.default(value='', disabled, selected) ---
             .col-md-4
                 h3 Front image
                 .image-container
-                    input(type='file', name='image[0]')
+                    input(type='file', name='imgFront')
                     if showImages
-                        - var img1Url = formatUrl( route.CARD_IMAGE, {id: id, imgId: 0} );
+                        - var img1Url = formatUrl( route.CARD_IMAGE, {id: id, type: 'front'} );
                         img.img-responsive.img-thumbnail(src=img1Url)
             .col-md-4
                 h3 Back image
                 .image-container
-                    input(type='file', name='image[1]')
+                    input(type='file', name='imgBack')
                     if showImages
-                        - var img2Url = formatUrl( route.CARD_IMAGE, {id: id, imgId: 1} );
+                        - var img2Url = formatUrl( route.CARD_IMAGE, {id: id, type: 'back'} );
                         img.img-responsive.img-thumbnail(src=img2Url)
 
         .row

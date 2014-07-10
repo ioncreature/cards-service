@@ -13,15 +13,10 @@ var Server = {
     formatUrl: function( route, data ){
         var placeholders = route.match( /:\w+/g ) || [],
             res = route,
-            encodedData = {},
             i;
 
-        for ( var key in data )
-            if ( data.hasOwnProperty(key) )
-                encodedData[key] = encodeURIComponent( data[key] );
-
         for ( i = 0; i < placeholders.length; i++ )
-            res = res.replace( new RegExp(placeholders[i], 'g'), encodedData[placeholders[i].substr(1)] );
+            res = res.replace( new RegExp(placeholders[i], 'g'), encodeURIComponent(data[placeholders[i].substr(1)]) );
 
         return res;
     },
@@ -32,6 +27,22 @@ var Server = {
      */
     loadIssuers: function(){
         return $.get( Server.ISSUERS ).fail( function( error ){
+            alert( error.toString() );
+        });
+    },
+
+
+    /**
+     * @param {{issuerId?, sort?}?} options
+     * @returns {*}
+     */
+    loadCardTypes: function( options ){
+        var query = {};
+        if ( options && options.issuerId )
+            query.issuerId = options.issuerId;
+        if ( options && options.sort )
+            query.sort = 'name';
+        return $.get( Server.CARD_TYPES, query ).fail( function( error ){
             alert( error.toString() );
         });
     }
