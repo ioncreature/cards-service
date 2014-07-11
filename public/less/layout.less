@@ -38,16 +38,16 @@
     }
 
     &.users {
-        .colorize-menu( @color-bg-light-orange );
+        .colorize-menu(@color-light-orange);
     }
     &.issuers {
-        .colorize-menu( @color-bg-light-green );
+        .colorize-menu(@color-light-green);
     }
     &.cards {
-        .colorize-menu( @color-bg-light-blue2 );
+        .colorize-menu(@color-light-blue2);
     }
     &.error {
-        .colorize-menu( @color-bg-light-red );
+        .colorize-menu(@color-light-red);
     }
 
     .colorize-menu( @color ){
@@ -76,8 +76,7 @@
         }
 
         button, a {
-            margin-top: 20px;
-            margin-bottom: 10px;
+            margin: 20px 0 10px 10px;
             float: right;
         }
     }
@@ -89,6 +88,6 @@
     padding: 2em 0;
     span {
         font-size: 10em;
-        color: darken(@color-bg-light-red, 20%);
+        color: darken(@color-light-red, 20%);
     }
 }

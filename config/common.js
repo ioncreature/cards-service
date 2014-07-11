@@ -15,6 +15,7 @@ exports.route = {
     CARDS_PAGE: '/cards',
     NEW_CARD_PAGE: '/cards/new',
     CARD_PAGE: '/cards/:id',
+    CARD_MODERATE: '/cards/moderate',
     ISSUERS_PAGE: '/issuers',
     ISSUER_PAGE: '/issuers/:id',
     NEW_ISSUER_PAGE: '/issuers/new',

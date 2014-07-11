@@ -10,12 +10,10 @@ $( function(){
     issuersSelect.change( function(){
         var issuerId = issuersSelect.val();
         issuerId && Server.loadCardTypes( {issuerId: issuerId} ).then( function( typesList ){
-            if ( typesList.length ){
-                typesSelect.find( 'option' ).remove();
-                typesList.forEach( function( type ){
-                    typesSelect.append( '<option value="' + type._id + '">' + type.name + '</option>' );
-                });
-            }
+            typesSelect.find( 'option' ).remove();
+            (typesList || []).forEach( function( type ){
+                typesSelect.append( '<option value="' + type._id + '">' + type.name + '</option>' );
+            });
         });
     });
 });

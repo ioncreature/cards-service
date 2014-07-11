@@ -25,26 +25,35 @@ block content
                         each issuer in issuers
                             - var selected = String( issuer._id ) === String( issuerId )
                             option(value=issuer._id, selected=selected)= issuer.name
+                    p.help-block You can
+                        a(href=route.NEW_ISSUER_PAGE, target='_blank') &nbsp;add new issuer
                 .form-group
                     label(for='type-id') Card Type
                     select.form-control(name='typeId')
                         option.default(value='', disabled, selected) ---
+                        each type in cardTypes
+                            - var selected = String( type._id ) === String( typeId )
+                            option(value=type._id, selected=selected)= type.name
             .col-md-4
                 h3 Front image
                 .image-container
                     input(type='file', name='imgFront')
                     if showImages
-                        - var img1Url = formatUrl( route.CARD_IMAGE, {id: id, type: 'front'} );
-                        img.img-responsive.img-thumbnail(src=img1Url)
+                        - var img1Url = formatUrl( route.API_PREFIX + route.CARD_IMAGE, {id: id, type: 'front'} );
+                        a(href=img1Url)
+                            img.img-responsive.img-thumbnail(src=img1Url)
             .col-md-4
                 h3 Back image
                 .image-container
                     input(type='file', name='imgBack')
                     if showImages
-                        - var img2Url = formatUrl( route.CARD_IMAGE, {id: id, type: 'back'} );
-                        img.img-responsive.img-thumbnail(src=img2Url)
+                        - var img2Url = formatUrl( route.API_PREFIX + route.CARD_IMAGE, {id: id, type: 'back'} );
+                        a(href=img2Url)
+                            img.img-responsive.img-thumbnail(src=img2Url)
 
         .row
             .col-md-12.center.offset-top
                 button.btn.btn-success(type='submit')= submitCaption
+                //if showNextButton
+                //    button.btn.btn-success(type='submit') Update and next
 

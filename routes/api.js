@@ -55,7 +55,7 @@ router.get( route.CARD_TYPES, function( req, res, next ){
         options = {};
 
     if ( issuerId && ObjectId.isValid(issuerId) )
-        conditions.issuerId = issuerId;
+        conditions.issuerId = new ObjectId( issuerId );
 
     CardType.find( conditions, null, options, function( error, docs ){
         if ( error )
@@ -81,13 +81,13 @@ router.get( route.CARD_IMAGE, function( req, res, next ){
                 e.status = 404;
                 next( e );
             }
-            else if ( !card[field] ){
+            else if ( !card[field] || !card[field].data ){
                 e = new Error( 'Card with ID "' + util.stripTags( id ) + '" not found' );
                 e.status = 404;
                 next( e );
             }
             else {
-                res.contentType( card[field].mimeType );
+                card[field].mimeType && res.contentType( card[field].mimeType );
                 res.send( card[field].data );
             }
         });

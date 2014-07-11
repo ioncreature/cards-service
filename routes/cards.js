@@ -16,33 +16,44 @@ var registry = require( '../lib/registry' ),
 
 
 exports.getCards = function( req, res, next ){
-    Card.find( function( error, cards ){
+    Card.find( {}, '-imgFront.data -imgBack.data', function( error, cards ){
         if ( error )
             next( error );
         else
             res.render( 'page/cards', {
                 pageName: 'cards',
                 pageTitle: 'Cards list',
-                cards: cards || []
+                cards: cards || [],
+                done: req.query.hasOwnProperty( 'done' )
             });
     });
 };
 
 
 exports.getCard = function( req, res, next ){
-    var id = req.params.id;
+    var id = req.params.id,
+        card;
 
     if ( ObjectId.isValid(id) ){
         id = new ObjectId( id );
-        async.parallel({
+        async.series({
             card: function( cb ){
-                Card.findById( id, cb );
+                Card.findById( id, '-imgFront.data -imgBack.data', function( error, data ){
+                    card = data;
+                    cb( error, data );
+                });
             },
             issuers: function( cb ){
                 Issuer.find( cb );
+            },
+            cardTypes: function( cb ){
+                if ( card && card.issuerId )
+                    CardType.find( {issuerId: card.issuerId}, cb );
+                else
+                    cb();
             }
         }, function( error, result ){
-            var card = result.card,
+            var cardTypes = result.cardTypes || [],
                 issuers = result.issuers;
             if ( error )
                 next( error );
@@ -57,9 +68,12 @@ exports.getCard = function( req, res, next ){
                     city: card.city || '',
                     issuerId: card.issuerId || '',
                     issuers: issuers,
+                    typeId: card.typeId || '',
+                    cardTypes: cardTypes,
                     userId: card.userId || '',
                     showImages: true,
                     postUrl: util.formatUrl( route.CARD_PAGE, {id: id} ),
+                    showNextButton: true,
                     submitCaption: 'Update card'
                 });
         });
@@ -81,39 +95,13 @@ exports.getNewCard = function( req, res, next ){
                 name: '',
                 city: '',
                 issuers: issuers || [],
+                cardTypes: [],
                 userId: '',
                 showImages: false,
                 postUrl: route.NEW_CARD_PAGE,
                 submitCaption: 'Create card'
             });
     });
-};
-
-
-exports.createCard = function( error, req, res, next ){
-    if ( error )
-        next( error );
-    else {
-        var card = new Card;
-        if ( req.files.imgFront ){
-            card.imgFront.mimeType = req.files.imgFront.mimetype;
-            card.imgFront.data = fs.readFileSync( req.files.imgFront.path );
-            fs.unlinkSync( req.files.imgFront.path );
-        }
-        if ( req.files.imgBack ){
-            card.imgBack.mimeType = req.files.imgBack.mimetype;
-            card.imgBack.data = fs.readFileSync( req.files.imgBack.path );
-            fs.unlinkSync( req.files.imgBack.path );
-        }
-        delete req.files;
-        card.set( cardData );
-        card.save( function( error, card ){
-            if ( error )
-                next( error );
-            else
-                res.redirect( util.formatUrl(route.CARD_PAGE, {id: card._id}) );
-        });
-    }
 };
 
 
@@ -152,6 +140,11 @@ exports.validateCard = function( req, res, next ){
     if ( error )
         next( error );
     else {
+        if ( req.files.imgFront )
+            setFile( cardData, 'imgFront', req.files.imgFront );
+        if ( req.files.imgBack )
+            setFile( cardData, 'imgBack', req.files.imgBack );
+        delete req.files;
         req.cardData = cardData;
 
         if ( Object.keys(queries).length )
@@ -172,35 +165,62 @@ exports.validateCard = function( req, res, next ){
 };
 
 
-exports.updateCard = function( error, req, res, next ){
-    if ( error )
-        next( error );
-    else {
-        var card = new Card;
-        if ( req.files.imgFront ){
-            card.imgFront.mimeType = req.files.imgFront.mimetype;
-            card.imgFront.data = fs.readFileSync( req.files.imgFront.path );
-            fs.unlinkSync( req.files.imgFront.path );
-        }
-        if ( req.files.imgBack ){
-            card.imgBack.mimeType = req.files.imgBack.mimetype;
-            card.imgBack.data = fs.readFileSync( req.files.imgBack.path );
-            fs.unlinkSync( req.files.imgBack.path );
-        }
-        delete req.files;
-        card.set( req.cardData );
-        card.save( function( error, card ){
+exports.createCard = function( req, res, next ){
+    var card = new Card;
+    card.set( req.cardData );
+    card.save( function( error, card ){
+        if ( error )
+            next( error );
+        else
+            res.redirect( util.formatUrl(route.CARD_PAGE, {id: card._id}) );
+    });
+};
+
+
+exports.updateCard = function( req, res, next ){
+    var id = req.params.id,
+        card = req.cardData;
+
+    if ( ObjectId.isValid(id) ){
+        id = new ObjectId( id );
+        Card.findByIdAndUpdate( id, card, function( error, card ){
             if ( error )
                 next( error );
             else
                 res.redirect( util.formatUrl(route.CARD_PAGE, {id: card._id}) );
         });
     }
-    res.render( 'page/card', {
-        pageName: 'cards',
-        pageTitle: 'Card'
+    else
+        next( new Error('Invalid ID "' + util.stripTags(id)) );
+};
+
+
+
+exports.moveToModerate = function( req, res, next ){
+    Card.findOne({
+        $or: [
+            {issuerId: {$exists: false}},
+            {typeId: {$exists: false}}
+        ]
+    }, function( error, card ){
+        if ( error )
+            next( error );
+        else if ( !card )
+            res.redirect( route.CARDS_PAGE + '?done' );
+        else
+            res.redirect( util.formatUrl(route.CARD_PAGE, {id: card._id}) );
+
     });
 };
+
+
+function setFile( object, name, fileDescriptor ){
+    if ( !object[name] )
+        object[name] = {};
+    object[name].mimeType = fileDescriptor.mimetype;
+    object[name].data = fs.readFileSync( fileDescriptor.path );
+    fs.unlinkSync( fileDescriptor.path );
+}
 
 
 function filterString( str ){

@@ -5,27 +5,24 @@ extends ../layout
 
 block header-buttons
     a.btn.btn-default(href=route.NEW_CARD_PAGE) Add card
+    a.btn.btn-default(href=route.CARD_MODERATE) Moderate
 
 block content
-    .table-responsive
+    #cards.table-responsive
+        if ( done )
+            .alert.alert-success Well done! All cards are full.
         table.table.table-striped.table-hover
             tr
                 th Name
                 th City
                 th Issuer Name
                 th Card Type
-                th Is full
             each card in cards
                 - var cardUrl = formatUrl( route.CARD_PAGE, {id: card._id} )
-                tr(class=card.full ? 'success' : '')
+                tr(class=card.isFull() ? '' : 'danger')
                     td
                         a(href=cardUrl)= (card.name || '---')
                     td
                         a(href=cardUrl)= (card.city || '---')
-                    td= card.issuerName
                     td= card.typeName
-                    td
-                        if card.full
-                            span.glyphicon.glyphicon-plus
-                        else
-                            span.glyphicon.glyphicon-minus
+                    td= card.issuerName

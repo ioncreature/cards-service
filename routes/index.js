@@ -25,12 +25,11 @@ router.get( route.INDEX, function( req, res ){
 });
 
 router.get( route.CARDS_PAGE, cards.getCards );
+router.get( route.CARD_MODERATE, cards.moveToModerate );
 router.get( route.NEW_CARD_PAGE, cards.getNewCard );
-router.post( route.NEW_CARD_PAGE, cards.validateCard );
-router.post( route.NEW_CARD_PAGE, cards.createCard );
+router.post( route.NEW_CARD_PAGE, cards.validateCard, cards.createCard );
 router.get( route.CARD_PAGE, cards.getCard );
-router.post( route.CARD_PAGE, cards.validateCard );
-router.post( route.CARD_PAGE, cards.updateCard );
+router.post( route.CARD_PAGE, cards.validateCard, cards.updateCard );
 
 router.get( route.USERS_PAGE, users.getUsers );
 router.get( route.USER_PAGE, users.getUser );
