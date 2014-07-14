@@ -1,0 +1,29 @@
+// @author Alexander Marenin
+// @date July 2014
+
+extends ../layout
+
+block content
+    .row
+        .col-md-4
+            .panel.panel-cards
+                .panel-heading Cards statistics
+                ul.list-group
+                    li.list-group-item Total cards
+                        .value= cardsCount
+
+        .col-md-4
+            .panel.panel-issuers
+                .panel-heading Issuers statistics
+                ul.list-group
+                    li.list-group-item Total issuers
+                        .value= issuersCount
+                    li.list-group-item Total card types
+                        .value= cardTypesCount
+
+        .col-md-4
+            .panel.panel-users
+                .panel-heading Users statistics
+                ul.list-group
+                    li.list-group-item Total users
+                        .value= usersCount

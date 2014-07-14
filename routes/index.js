@@ -5,6 +5,7 @@
 
 var router = require( 'express' ).Router(),
     registry = require( '../lib/registry' ),
+    async = require( 'async' ),
     route = registry.get( 'config' ).route,
     db = registry.get( 'db' ),
     issuers = require( './issuers' ),
@@ -12,15 +13,39 @@ var router = require( 'express' ).Router(),
     cards = require( './cards' ),
     Card = db.Card,
     CardType = db.CardType,
+    User = db.User,
+    Issuer = db.Issuer,
     ObjectId = db.ObjectId;
 
 module.exports = router;
 
 
-router.get( route.INDEX, function( req, res ){
-    res.render( 'page/index', {
-        pageName: 'index',
-        pageTitle: 'Dashboard'
+router.get( route.INDEX, function( req, res, next ){
+    async.parallel({
+        usersCount: function( cb ){
+            User.count( cb );
+        },
+        issuersCount: function( cb ){
+            Issuer.count( cb);
+        },
+        cardsCount: function( cb ){
+            Card.count( cb );
+        },
+        cardTypesCount: function( cb ){
+            CardType.count( cb );
+        }
+    }, function( error, result ){
+        if ( error )
+            next( error );
+        else
+            res.render( 'page/dashboard', {
+                pageName: 'dashboard',
+                pageTitle: 'Dashboard',
+                usersCount: result.usersCount,
+                issuersCount: result.issuersCount,
+                cardsCount: result.cardsCount,
+                cardTypesCount: result.cardTypesCount
+            });
     });
 });
 

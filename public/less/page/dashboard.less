@@ -1,0 +1,44 @@
+/**
+ * @author Alexander Marenin
+ * @date July 2014
+ */
+
+
+body.dashboard {
+    .panel-cards {
+        .colorize-panel( @color-light-blue2 );
+    }
+
+    .panel-issuers {
+        .colorize-panel( @color-light-green );
+    }
+
+    .panel-users {
+        .colorize-panel( @color-light-orange );
+    }
+
+    .colorize-panel( @color ){
+        border-color: darken(@color, 10%);
+        color: darken(@color, 60%);
+
+        & > .panel-heading {
+            font-family: 'Open Sans Condensed';
+            font-size: 1.4em;
+            color: darken(@color, 50%);
+            background-color: @color;
+            border-color: darken(@color, 10%);
+        }
+    }
+
+
+    .panel {
+        .list-group-item {
+            overflow: hidden;
+        }
+        .value {
+            float: right;
+            font-weight: bold;
+        }
+    }
+}
+
