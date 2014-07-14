@@ -5,7 +5,8 @@
 
 $( function(){
     var issuersSelect = $( 'select[name=issuerId]' ),
-        typesSelect = $( 'select[name=typeId]' );
+        typesSelect = $( 'select[name=typeId]' ),
+        updateAndNext = $( '#update-and-next' );
 
     issuersSelect.change( function(){
         var issuerId = issuersSelect.val();
@@ -16,4 +17,9 @@ $( function(){
             });
         });
     });
+
+    updateAndNext.click( function(){
+        updateAndNext.attr( 'name', 'next' );
+        updateAndNext.attr( 'value', 'yep' );
+    })
 });

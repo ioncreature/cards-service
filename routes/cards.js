@@ -73,8 +73,10 @@ exports.getCard = function( req, res, next ){
                     userId: card.userId || '',
                     showImages: true,
                     postUrl: util.formatUrl( route.CARD_PAGE, {id: id} ),
+                    haveFrontImg: card.imgFront && !!card.imgFront.mimeType,
+                    haveBackImg: card.imgBack && !!card.imgBack.mimeType,
                     showNextButton: true,
-                    submitCaption: 'Update card'
+                    submitCaption: 'Update'
                 });
         });
     }
@@ -168,24 +170,27 @@ exports.validateCard = function( req, res, next ){
 exports.createCard = function( req, res, next ){
     var card = new Card;
     card.set( req.cardData );
-    card.save( function( error, card ){
+    card.save( function( error ){
         if ( error )
             next( error );
         else
-            res.redirect( util.formatUrl(route.CARD_PAGE, {id: card._id}) );
+            res.redirect( route.CARDS_PAGE );
     });
 };
 
 
 exports.updateCard = function( req, res, next ){
     var id = req.params.id,
-        card = req.cardData;
+        card = req.cardData,
+        goNextCard = req.body.hasOwnProperty( 'next' );
 
     if ( ObjectId.isValid(id) ){
         id = new ObjectId( id );
         Card.findByIdAndUpdate( id, card, function( error, card ){
             if ( error )
                 next( error );
+            else if ( goNextCard )
+                res.redirect( route.CARD_MODERATE );
             else
                 res.redirect( util.formatUrl(route.CARD_PAGE, {id: card._id}) );
         });
@@ -200,7 +205,9 @@ exports.moveToModerate = function( req, res, next ){
     Card.findOne({
         $or: [
             {issuerId: {$exists: false}},
-            {typeId: {$exists: false}}
+            {typeId: {$exists: false}},
+            {imgBack: {$exists: false}},
+            {imgFront: {$exists: false}}
         ]
     }, function( error, card ){
         if ( error )
