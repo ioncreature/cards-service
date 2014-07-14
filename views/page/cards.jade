@@ -8,9 +8,9 @@ block header-buttons
     a.btn.btn-default(href=route.CARD_MODERATE) Moderate
 
 block content
+    if ( done )
+        .alert.alert-success Well done! All cards are filled.
     #cards.table-responsive
-        if ( done )
-            .alert.alert-success Well done! All cards are filled.
         table.table.table-striped.table-hover
             tr
                 th Name
