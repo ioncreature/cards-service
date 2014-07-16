@@ -44,7 +44,7 @@ exports.getCard = function( req, res, next ){
                 });
             },
             issuers: function( cb ){
-                Issuer.find( cb );
+                Issuer.find( {}, null, {sort: 'name'}, cb );
             },
             cardTypes: function( cb ){
                 if ( card && card.issuerId )

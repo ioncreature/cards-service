@@ -23,10 +23,19 @@ var Server = {
 
 
     /**
+     * @param {Object?} options
      * @returns jQuery.Deferred
      */
-    loadIssuers: function(){
-        return $.get( Server.ISSUERS ).fail( function( error ){
+    loadIssuers: function( options ){
+        var query = {};
+
+        if ( options && options.search )
+            query.search = options.search;
+
+        if ( options && options.sort )
+            query.sort = options.sort;
+
+        return $.get( Server.ISSUERS, query ).fail( function( error ){
             alert( error.toString() );
         });
     },

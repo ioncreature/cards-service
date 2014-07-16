@@ -18,7 +18,7 @@ exports.getUsers = function( req, res, next ){
         else
             res.render( 'page/users', {
                 pageName: 'users',
-                pageTitle: 'Users',
+                pageTitle: 'Users list',
                 users: users || []
             });
     });

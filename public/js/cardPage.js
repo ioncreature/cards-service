@@ -8,6 +8,8 @@ $( function(){
         typesSelect = $( 'select[name=typeId]' ),
         updateAndNext = $( '#update-and-next' );
 
+    issuersSelect.chosen();
+
     issuersSelect.change( function(){
         var issuerId = issuersSelect.val();
         issuerId && Server.loadCardTypes( {issuerId: issuerId} ).then( function( typesList ){
@@ -18,8 +20,9 @@ $( function(){
         });
     });
 
+
     updateAndNext.click( function(){
         updateAndNext.attr( 'name', 'next' );
         updateAndNext.attr( 'value', 'yep' );
-    })
+    });
 });

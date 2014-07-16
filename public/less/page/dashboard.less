@@ -5,6 +5,16 @@
 
 
 body.dashboard {
+    .panel {
+        .list-group-item {
+            overflow: hidden;
+        }
+        .value {
+            float: right;
+            font-weight: bold;
+        }
+    }
+
     .panel-cards {
         .colorize-panel( @color-light-blue2 );
     }
@@ -28,16 +38,9 @@ body.dashboard {
             background-color: @color;
             border-color: darken(@color, 10%);
         }
-    }
 
-
-    .panel {
         .list-group-item {
-            overflow: hidden;
-        }
-        .value {
-            float: right;
-            font-weight: bold;
+            border-color: darken(@color, 10%);
         }
     }
 }

@@ -3,29 +3,20 @@
  * @date July 2014
  */
 
-
 body {
     font-size: 14px;
-    font-family: 'Open Sans', Tahoma;
+    font-family: @font-family-common;
     color: @color-text;
     -webkit-text-stroke: 0.2px;
     -webkit-font-smoothing: antialiased;
 }
 
 .header, h1, h2, h3, h4 {
-    font-family: 'Open Sans Condensed', 'Open Sans Light', Tahoma;
+    font-family: @font-family-header, @font-family-common;
 }
 
 h3 {
     font-size: 22px;
-}
-
-button#addType {
-    float: right;
-}
-
-span.glyphicon {
-    color: @color-slate;
 }
 
 form label {
@@ -40,29 +31,13 @@ form label {
     margin-top: 20px;
 }
 
-.image-container {
-    margin-top: 35px;
-}
-
-form#card {
-    .image-container {
-        img {
-            margin-top: 25px;
-        }
-
-        .alert {
-            margin-top: 34px;
-        }
-    }
-}
-
-
 span.glyphicon {
     margin-right: 6px;
     color: inherit;
 }
 
-
-#update-and-next {
-    margin-left: 20px;
+tr > th {
+    font-weight: normal;
+    font-family: @font-family-header;
+    font-size: 1.4em;
 }

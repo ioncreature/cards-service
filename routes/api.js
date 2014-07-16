@@ -28,17 +28,23 @@ router.get( route.API_INFO, function( req, res ){
 
 router.get( route.ISSUERS, function( req, res, next ){
     var sort = String( req.query.sort || '' ),
+        search = String( req.query.search || '' ),
         conditions = {},
-        options = {};
+        options = {
+            limit: 10
+        };
 
     if ( sort ){
-        var field = sort.split( ',' )[0],
+        var sortField = sort.split( ',' )[0],
             order = sort.split( ',' )[1];
-        if ( field ){
+        if ( sortField ){
             options.sort = {};
-            options.sort[field] = order === 'DESC' ? -1 : 1;
+            options.sort[sortField] = order === 'DESC' ? -1 : 1;
         }
     }
+
+    if ( search )
+        conditions.name = new RegExp( search, 'i' );
 
     Issuer.find( conditions, null, options, function( error, docs ){
         if ( error )
