@@ -14,8 +14,7 @@ var router = require( 'express' ).Router(),
     Card = db.Card,
     CardType = db.CardType,
     User = db.User,
-    Issuer = db.Issuer,
-    ObjectId = db.ObjectId;
+    Issuer = db.Issuer;
 
 module.exports = router;
 
@@ -31,6 +30,16 @@ router.get( route.INDEX, function( req, res, next ){
         cardsCount: function( cb ){
             Card.count( cb );
         },
+        filledCardsCount: function( cb ){
+            Card.find({
+                $and: [
+                    {issuerId: {$exists: true}},
+                    {typeId: {$exists: true}},
+                    {imgBack: {$exists: true}},
+                    {imgFront: {$exists: true}}
+                ]
+            }).count( cb );
+        },
         cardTypesCount: function( cb ){
             CardType.count( cb );
         }
@@ -44,6 +53,8 @@ router.get( route.INDEX, function( req, res, next ){
                 usersCount: result.usersCount,
                 issuersCount: result.issuersCount,
                 cardsCount: result.cardsCount,
+                filledCardsCount: result.filledCardsCount,
+                emptyCardsCount: result.cardsCount - result.filledCardsCount,
                 cardTypesCount: result.cardTypesCount
             });
     });
