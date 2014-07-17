@@ -19,7 +19,7 @@ block content
                 th Card Type
             each card in cards
                 - var cardUrl = formatUrl( route.CARD_PAGE, {id: card._id} )
-                tr(class=card.isFull() ? '' : 'danger')
+                tr(class=card.isFull() ? '' : 'not-filled')
                     td
                         a(href=cardUrl)= (card.name || '---')
                     td
