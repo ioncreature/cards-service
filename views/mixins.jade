@@ -1,0 +1,25 @@
+// @author Alexander Marenin
+// @date July 2014
+
+
+mixin pagination(current, total, tplUrl)
+    -var offset = 5
+    ul.pagination
+        -var start = current > offset ? current - offset : 1
+        -var end = total - current > offset ? current + offset : total
+        -var n = start
+        -var makeUrl = function( n ){ return formatUrl(tplUrl, {page: n}) }
+
+        if current - offset > 1
+            li
+                a(href=makeUrl(1)) &larr;
+
+        while ( n <= end )
+            -var className = n === current ? 'active' : ''
+            li(class=className)
+                a(href=makeUrl(n))= n
+            - n++
+
+        if current + offset < total
+            li
+                a(href=makeUrl(total)) &rarr;

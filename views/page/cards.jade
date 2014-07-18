@@ -2,6 +2,10 @@
 // @date July 2014
 
 extends ../layout
+include ../mixins
+
+block scripts
+    script(src='/public/js/cardsPage.js')
 
 block header-buttons
     a.btn.btn-default(href=route.NEW_CARD_PAGE) Add card
@@ -10,19 +14,38 @@ block header-buttons
 block content
     if ( done )
         .alert.alert-success Well done! All cards are filled.
+
+    if totalPages > 1
+        .center
+            +pagination(currentPage, totalPages, tplUrl)
+
     #cards.table-responsive
         table.table.table-striped.table-hover
             tr
-                th Name
                 th City
-                th Issuer Name
+                th Issuer
                 th Card Type
+                th.short.center Front Image
+                th.short.center Back Image
             each card in cards
                 - var cardUrl = formatUrl( route.CARD_PAGE, {id: card._id} )
-                tr(class=card.isFull() ? '' : 'not-filled')
+                - var rowClass = card.isFull() ? '' : 'not-filled'
+                tr(class=rowClass, data-card-url=cardUrl)
                     td
-                        a(href=cardUrl)= (card.name || '---')
-                    td
-                        a(href=cardUrl)= (card.city || '---')
+                        a(href=cardUrl)= card.city || '---'
                     td= card.issuerName
                     td= card.typeName
+                    td.center
+                        if card.imgFront && card.imgFront.mimeType
+                            span.glyphicon.glyphicon-ok
+                        else
+                            span.glyphicon.glyphicon-remove
+                    td.center
+                        if card.imgBack && card.imgBack.mimeType
+                            span.glyphicon.glyphicon-ok
+                        else
+                            span.glyphicon.glyphicon-remove
+
+    if totalPages > 1
+        .center
+            +pagination(currentPage, totalPages, tplUrl)

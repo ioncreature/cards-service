@@ -3,9 +3,12 @@
  * @date July 2014
  */
 
+const CARDS_PER_PAGE = 100;
+
 var registry = require( '../lib/registry' ),
     fs = require( 'fs' ),
     async = require( 'async' ),
+    qs = require( 'qs' ),
     util = require( '../lib/util' ),
     route = registry.get( 'config' ).route,
     db = registry.get( 'db' ),
@@ -16,16 +19,37 @@ var registry = require( '../lib/registry' ),
 
 
 exports.getCards = function( req, res, next ){
-    Card.find( {}, '-imgFront.data -imgBack.data', function( error, cards ){
+    var query = {},
+        page = Number( req.query.page ) || 1;
+
+    async.parallel({
+        count: function( cb ){
+            Card.count( query, cb );
+        },
+        cards: function( cb ){
+            Card.find( {}, '-imgFront.data -imgBack.data', {
+                limit: CARDS_PER_PAGE,
+                skip: ( page - 1 ) * CARDS_PER_PAGE
+            }, cb );
+        }
+    }, function( error, result ){
         if ( error )
             next( error );
-        else
+        else {
+            var tplQuery = util.mixin( {}, req.query );
+            delete tplQuery.page;
+            tplQuery = qs.stringify( tplQuery );
             res.render( 'page/cards', {
                 pageName: 'cards',
                 pageTitle: 'Cards list',
-                cards: cards || [],
+                cards: result.cards || [],
+                totalPages: Math.ceil( result.count / CARDS_PER_PAGE ),
+                tplUrl: '?' + (tplQuery ? tplQuery + '&' : '') + 'page=:page',
+                currentPage: page,
                 done: req.query.hasOwnProperty( 'done' )
             });
+        }
+
     });
 };
 
@@ -64,7 +88,6 @@ exports.getCard = function( req, res, next ){
                     pageName: 'cards',
                     pageTitle: 'Card',
                     id: id,
-                    name: card.name || '',
                     city: card.city || '',
                     issuerId: card.issuerId || '',
                     issuers: issuers,
@@ -94,7 +117,6 @@ exports.getNewCard = function( req, res, next ){
                 pageName: 'cards',
                 pageTitle: 'Card',
                 id: '',
-                name: '',
                 city: '',
                 issuers: issuers || [],
                 cardTypes: [],
@@ -109,7 +131,6 @@ exports.getNewCard = function( req, res, next ){
 
 exports.validateCard = function( req, res, next ){
     var cardData = {
-            name: filterString( req.body.name || '' ),
             city: filterString( req.body.city || '' )
         },
         issuerId = req.body.issuerId && filterString( req.body.issuerId ),

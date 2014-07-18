@@ -14,9 +14,6 @@ block content
             .col-md-4
                 h3 Information
                 .form-group
-                    label(for='card-name') Name
-                    input#card-name.form-control(type='text', name='name', value=name)
-                .form-group
                     label(for='card-city') City
                     input#card-city.form-control(type='text', name='city', value=city)
                 .form-group
@@ -26,7 +23,7 @@ block content
                         each issuer in issuers
                             - var selected = String( issuer._id ) === String( issuerId )
                             option(value=issuer._id, selected=selected)= issuer.name
-                    p.help-block You can
+                    p.help-block Or you can
                         a(href=route.NEW_ISSUER_PAGE, target='_blank') &nbsp;add new issuer
                 .form-group
                     label(for='type-id') Card Type
@@ -35,6 +32,8 @@ block content
                         each type in cardTypes
                             - var selected = String( type._id ) === String( typeId )
                             option(value=type._id, selected=selected)= type.name
+                    p.help-block Or you can
+                        a(href=route.NEW_ISSUER_PAGE, target='_blank') &nbsp;add new card type
             .col-md-4
                 h3 Front image
                 .image-container
