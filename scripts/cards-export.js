@@ -3,6 +3,8 @@
  * @date July 2014
  */
 
+require( 'colors' );
+
 var program = require( 'commander' ),
     util = require( '../lib/util' ),
     async = require( 'async' ),
@@ -14,12 +16,9 @@ var program = require( 'commander' ),
     mime = require( 'mime' ),
     ProgressBar = require( 'progress' );
 
-require( 'colors' );
-
 program
     .option( '-c, --config [name]', 'set the config name to use, default is "test"', 'test' )
     .option( '-s, --sourceDir <name>', 'set source dir path' );
-
 program.parse( process.argv );
 
 var config = util.getConfig( program.config ),
@@ -29,27 +28,36 @@ if ( !sourceDir )
     abort( new Error('sourceDir parameter is required') );
 
 
-console.log( 'Connecting to db' + '...'.green );
+console.log( 'Connecting to db' + '...'.yellow );
 db.connect( config.mongodb, {}, function( error ){
     if ( error )
         abort( error );
     else {
-        console.log( 'Parsing source directory' + '...'.green );
+        console.log( '\nParsing source directory' + '...'.yellow );
         var parsingStart = Date.now();
-        parseFolder( sourceDir, function( error, files ){
+        parseFolder( sourceDir, function( error, result ){
             if ( error )
                 abort( error );
             else {
-                console.log( 'Parsed %s cards in %s', files.length, toSec(Date.now() - parsingStart) );
-                console.log( 'Export cards to database' + '...'.green );
-                var exportStart = Date.now();
-                createCards( files, function( error ){
+                console.log( 'Parsed %s cards in %s', result.files.length, toSec(Date.now() - parsingStart) );
+                console.log( '\nExport users to database' + '...'.yellow );
+                var usersStart = Date.now();
+                createUsers( result.users, function( error, users ){
                     if ( error )
                         abort( error );
                     else {
-                        console.log( 'Export done in %s', toSec(Date.now() - exportStart) );
-                        console.log( 'Done!' );
-                        process.exit();
+                        console.log( '%s users added in %s', users.length, toSec(Date,now() - usersStart) );
+                        console.log( '\nExport cards to database' + '...'.yellow );
+                        var exportStart = Date.now();
+                        createCards( result.cards, users, function( error ){
+                            if ( error )
+                                abort( error );
+                            else {
+                                console.log( 'Export done in %s', toSec(Date.now() - exportStart) );
+                                console.log( 'Done!' );
+                                process.exit();
+                            }
+                        });
                     }
                 });
             }
@@ -71,6 +79,8 @@ function parseFolder( sourceDir, callback ){
             users.filter( filterDots ).forEach( function( user ){
                 var userDir = join( cityDir, user ),
                     cards = fs.readdirSync( userDir );
+
+                result.users.push( user );
 
                 cards.filter( filterDots ).forEach( function( folderName ){
                     var cardDir = join( userDir, folderName ),
@@ -102,14 +112,36 @@ function parseFolder( sourceDir, callback ){
 
         return res;
     }
+
+    function filterDots( folderName ){
+        return folderName !== '.' && folderName !== '..';
+    }
 }
 
 
-function createCards( list, callback ){
-    var barTpl = '[:bar] :percent (:current/:total) estimated time :etas',
-        bar = new ProgressBar( barTpl, {total: list.length, width: 30} );
+function createUsers( list, cb ){
+    var usersData = list.map( function( userName ){
+        return {source: 'crowd', externalId: userName};
+    });
+    User.create( usersData, function( error ){
+        cb( error, Array.prototype.slice.call(arguments, 1) );
+    });
+}
 
-    async.forEachSeries( list, function( cardInfo, cb ){
+
+function createCards( cards, users, callback ){
+    var barTpl = '[:bar] :percent (:current/:total) estimated time :etas',
+        bar = new ProgressBar( barTpl, {total: list.length, width: 40} );
+
+    async.forEachSeries( cards, function( cardInfo, cb ){
+        var userId = cardInfo.userId;
+        users.some( function( user ){
+            if ( user.externalId === cardInfo.userId ){
+                userId = user._id;
+                return true;
+            }
+        });
+
         Card.create({
             imgFront: {
                 mimeType: mime.lookup( cardInfo.frontImgPath ),
@@ -120,7 +152,7 @@ function createCards( list, callback ){
                 data: fs.readFileSync( cardInfo.backImgPath )
             },
             city: cardInfo.city,
-            userExtId: cardInfo.userId
+            userId: userId
         }, function( error ){
             bar.tick();
             if ( error )
@@ -137,10 +169,6 @@ function abort( error ){
         console.error( error.stack.grey );
     }
     process.abort( 1 );
-}
-
-function filterDots( folderName ){
-    return folderName !== '.' && folderName !== '..';
 }
 
 
