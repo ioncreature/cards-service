@@ -16,24 +16,33 @@ block content
                 .form-group
                     label(for='card-city') City
                     input#card-city.form-control(type='text', name='city', value=city)
-                .form-group
+                #exisitng-issuer-container.form-group
                     label(for='issuer-id') Issuer
                     select.form-control(name='issuerId')
                         option(value='', disabled, selected) ---
                         each issuer in issuers
                             - var selected = String( issuer._id ) === String( issuerId )
                             option(value=issuer._id, selected=selected)= issuer.name
-                    p.help-block Or you can
+                    p#new-issuer-help.help-block Or you can
                         a(href=route.NEW_ISSUER_PAGE, target='_blank') &nbsp;add new issuer
-                .form-group
+                #new-issuer-container.form-group
+                    label(for='new-issuer') New issuer name
+                    span#hide-new-issuer.glyphicon.glyphicon-remove
+                    input#new-issuer.form-control(type='text', name='newIssuer')
+
+                #existing-card-type-container.form-group
                     label(for='type-id') Card Type
                     select.form-control(name='typeId')
                         option.default(value='', disabled, selected) ---
                         each type in cardTypes
                             - var selected = String( type._id ) === String( typeId )
                             option(value=type._id, selected=selected)= type.name
-                    p.help-block Or you can
+                    p#new-card-type-help.help-block Or you can
                         a(href=route.NEW_ISSUER_PAGE, target='_blank') &nbsp;add new card type
+                #new-card-type-container.form-group
+                    label(for='new-issuer') New card type name
+                    span#hide-new-card-type.glyphicon.glyphicon-remove
+                    input#new-issuer.form-control(type='text', name='newCardType')
             .col-md-4
                 h3 Front image
                 .image-container

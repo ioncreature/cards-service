@@ -3,7 +3,7 @@
  * @date July 2014
  */
 
-const CARDS_PER_PAGE = 100;
+const CARDS_PER_PAGE = 50;
 
 var registry = require( '../lib/registry' ),
     fs = require( 'fs' ),
@@ -36,20 +36,22 @@ exports.getCards = function( req, res, next ){
         if ( error )
             next( error );
         else {
-            var tplQuery = util.mixin( {}, req.query );
+            var tplQuery = util.mixin( {}, req.query ),
+                tplUrl;
             delete tplQuery.page;
             tplQuery = qs.stringify( tplQuery );
+            tplUrl = '?' + (tplQuery ? tplQuery + '&' : '') + 'page=:page';
+
             res.render( 'page/cards', {
                 pageName: 'cards',
                 pageTitle: 'Cards list',
                 cards: result.cards || [],
                 totalPages: Math.ceil( result.count / CARDS_PER_PAGE ),
-                tplUrl: '?' + (tplQuery ? tplQuery + '&' : '') + 'page=:page',
+                tplUrl: tplUrl,
                 currentPage: page,
                 done: req.query.hasOwnProperty( 'done' )
             });
         }
-
     });
 };
 
@@ -134,11 +136,21 @@ exports.validateCard = function( req, res, next ){
             city: filterString( req.body.city || '' )
         },
         issuerId = req.body.issuerId && filterString( req.body.issuerId ),
+        newIssuerName = req.body.newIssuer,
         typeId = req.body.typeId && filterString( req.body.typeId ),
+        newTypeName = req.body.newCardType,
         queries = {},
         error;
 
-    if ( issuerId ){
+    if ( newIssuerName )
+        queries.issuer = function( cb ){
+            Issuer.create( {name: util.stripTags(newIssuerName)}, function( error, issuer ){
+                if ( !error )
+                    cardData.issuerId = issuer._id;
+                cb( error, issuer );
+            });
+        };
+    else if ( issuerId ){
         if ( ObjectId.isValid(issuerId) ){
             cardData.issuerId = new ObjectId( issuerId );
             queries.issuer = function( cb ){
@@ -149,7 +161,23 @@ exports.validateCard = function( req, res, next ){
             error = new Error( 'Invalid issuer ID "' + util.stripTags(issuerId) + '"' );
     }
 
-    if ( typeId ){
+
+    if ( newTypeName ){
+        queries.cardType = function( cb ){
+            if ( !cardData.issuerId )
+                cb( new Error('No issuer id is provided') );
+            else
+                CardType.create({
+                    name: util.stripTags( newTypeName ),
+                    issuerId: cardData.issuerId
+                }, function( error, cardType ){
+                    if ( !error )
+                        cardData.typeId = cardType._id;
+                    cb( error, cardType );
+                });
+        };
+    }
+    else if ( typeId ){
         if ( ObjectId.isValid(typeId) ){
             cardData.typeId = new ObjectId( typeId );
             queries.cardType = function( cb ){
@@ -171,7 +199,7 @@ exports.validateCard = function( req, res, next ){
         req.cardData = cardData;
 
         if ( Object.keys(queries).length )
-            async.parallel( queries, function( error, result ){
+            async.series( queries, function( error, result ){
                 if ( error )
                     next( error );
                 else {

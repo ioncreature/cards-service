@@ -15,10 +15,6 @@ block content
     if ( done )
         .alert.alert-success Well done! All cards are filled.
 
-    if totalPages > 1
-        .center
-            +pagination(currentPage, totalPages, tplUrl)
-
     #cards.table-responsive
         table.table.table-striped.table-hover
             tr
