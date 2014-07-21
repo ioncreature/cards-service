@@ -131,7 +131,7 @@ function createUsers( list, cb ){
 
 function createCards( cards, users, callback ){
     var barTpl = '[:bar] :percent (:current/:total) estimated time :etas',
-        bar = new ProgressBar( barTpl, {total: list.length, width: 40} );
+        bar = new ProgressBar( barTpl, {total: cards.length, width: 40} );
 
     async.forEachSeries( cards, function( cardInfo, cb ){
         var userId = cardInfo.userId;
