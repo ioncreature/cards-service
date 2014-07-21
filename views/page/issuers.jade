@@ -19,7 +19,7 @@ block content
                 tr
                     td
                         a(href=issuerUrl)= issuer.name
-                    td= String(issuer.description).slice( 0, 80 )
+                    td= issuer.description ? String(issuer.description).slice( 0, 80 ) : '-'
                     td= issuer.phone || '-'
                     td
                         a(href=issuer.url, target='_blank')= issuer.url

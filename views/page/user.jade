@@ -1,0 +1,23 @@
+// @author Alexander Marenin
+// @date July 2014
+
+
+extends ../layout
+
+block content
+    form(role='form', method='POST', action=postUrl, enctype='multipart/form-data')
+        .row
+            .col-md-3
+            .col-md-6
+                .form-group
+                    label(for='user-id') ID
+                    input#user-id.form-control(type='text', name='_id', value=user._id, readonly)
+                .form-group
+                    label(for='user-name') Name
+                    input#user-name.form-control(type='text', name='name', value=user.name, readonly)
+                .form-group
+                    label(for='user-source') Source
+                    input#user-source.form-control(type='text', name='source', value=user.source, readonly)
+                .form-group
+                    label(for='user-external-id') External ID
+                    input#user-external-id.form-control(type='text', name='externalId', value=user.externalId, readonly)

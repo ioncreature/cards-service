@@ -39,9 +39,12 @@ $( function(){
         issuerContainer.hide();
         newIssuerContainer.show();
         newIssuerContainer.find( 'input' ).focus();
+        cardTypeContainer.hide();
+        newCardTypeContainer.show();
     }).find( 'a' ).click( function( event ){
         event.preventDefault();
     });
+
 
     newIssuerContainer.find( 'input' ).on( 'keyup', function( event ){
         if ( event.keyCode === 27 )
@@ -63,6 +66,7 @@ $( function(){
     }).find( 'a' ).click( function( event ){
         event.preventDefault();
     });
+
 
     newCardTypeContainer.find( 'input' ).on( 'keyup', function( event ){
         if ( event.keyCode === 27 )

@@ -39,14 +39,14 @@ db.connect( config.mongodb, {}, function( error ){
             if ( error )
                 abort( error );
             else {
-                console.log( 'Parsed %s cards in %s', result.files.length, toSec(Date.now() - parsingStart) );
+                console.log( 'Parsed %s cards in %s', result.cards.length, toSec(Date.now() - parsingStart) );
                 console.log( '\nExport users to database' + '...'.yellow );
                 var usersStart = Date.now();
                 createUsers( result.users, function( error, users ){
                     if ( error )
                         abort( error );
                     else {
-                        console.log( '%s users added in %s', users.length, toSec(Date,now() - usersStart) );
+                        console.log( '%s users added in %s', users.length, toSec(Date.now() - usersStart) );
                         console.log( '\nExport cards to database' + '...'.yellow );
                         var exportStart = Date.now();
                         createCards( result.cards, users, function( error ){
@@ -68,7 +68,6 @@ db.connect( config.mongodb, {}, function( error ){
 
 function parseFolder( sourceDir, callback ){
     var result = {cards: [], users: []},
-        list = [],
         cities = fs.readdirSync( sourceDir );
 
     try {
@@ -97,7 +96,7 @@ function parseFolder( sourceDir, callback ){
                 });
             });
         });
-        callback( undefined, list );
+        callback( undefined, result );
     }
     catch ( error ){
         callback( error );
