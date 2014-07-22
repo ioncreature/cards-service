@@ -1,0 +1,35 @@
+#!/bin/bash
+# Cards Service
+# @author Alexander Marenin
+# @date July 2014
+
+export PATH=$PATH:/usr/local/bin
+export CSHOME="/var/repo/cards-service"
+export CSAPP="app"
+export CSPARAMS="-c prod"
+export CSLOG="/var/log/backoffice.log"
+
+case "$1" in
+start)
+    echo "Starting Cards Service"
+    forever stop $CSHOME/$CSAPP $CSPARAMS
+    forever start -a -l $CSLOG $CSHOME/$CSAPP $CSPARAMS
+    ;;
+stop)
+    echo "Stopping Cards Service"
+    forever stop $CSHOME/$CSAPP $CSPARAMS
+    ;;
+restart)
+    echo "Restarting Cards Service"
+    forever restart $CSHOME/$CSAPP $CSPARAMS
+    ;;
+status)
+    forever list
+    ;;
+*)
+    echo "Cards Service"
+    echo "Usage: service cards-service {start|stop|restart|status}"
+    exit 1
+esac
+
+exit 0
