@@ -5,7 +5,7 @@
 
 exports.debug = true;
 
-exports.port = 80;
+exports.port = 8080;
 
 exports.mongodb = [
     {
