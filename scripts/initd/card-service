@@ -5,7 +5,7 @@
 
 export PATH=$PATH:/usr/local/bin
 export CSHOME="/var/repo/cards-service"
-export CSAPP="app"
+export CSAPP="app.js"
 export CSPARAMS="-c prod"
 export CSLOG="/var/log/backoffice.log"
 
