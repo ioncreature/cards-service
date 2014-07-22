@@ -101,6 +101,7 @@ exports.getCard = function( req, res, next ){
                     haveFrontImg: card.imgFront && !!card.imgFront.mimeType,
                     haveBackImg: card.imgBack && !!card.imgBack.mimeType,
                     showNextButton: true,
+                    defaultNewType: 'Базовый',
                     submitCaption: 'Update'
                 });
         });
@@ -125,7 +126,8 @@ exports.getNewCard = function( req, res, next ){
                 userId: '',
                 showImages: false,
                 postUrl: route.NEW_CARD_PAGE,
-                submitCaption: 'Create card'
+                submitCaption: 'Create card',
+                defaultNewType: 'Базовый'
             });
     });
 };

@@ -42,7 +42,7 @@ block content
                 #new-card-type-container.form-group
                     label(for='new-issuer') New card type name
                     span#hide-new-card-type.glyphicon.glyphicon-remove
-                    input#new-issuer.form-control(type='text', name='newCardType')
+                    input#new-issuer.form-control(type='text', name='newCardType', value=defaultNewType || '')
             .col-md-4
                 h3 Front image
                 .image-container
