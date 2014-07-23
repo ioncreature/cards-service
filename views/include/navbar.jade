@@ -12,14 +12,17 @@ header#main-menu.navbar.navbar-default(role="banner", class=pageName)
                 span.icon-bar
             a#logo.navbar-brand.header(href='/')=title
 
-        nav#main-nav.collapse.navbar-collapse(role='navigation')
-            ul.nav.navbar-nav.navbar-right
-                li(class=pageName === 'dashboard' ? 'active' : '' )
-                    a(href='/') Dashboard
-                li(class=pageName === 'cards' ? 'active' : '' )
-                    a(href='/cards') Cards
-                li(class=pageName === 'issuers' ? 'active' : '' )
-                    a(href='/issuers') Issuers
-                li(class=pageName === 'users' ? 'active' : '' )
-                    a(href='/users') Users
+        if pageName !== 'login'
+            nav#main-nav.collapse.navbar-collapse(role='navigation')
+                ul.nav.navbar-nav.navbar-right
+                    li(class=pageName === 'dashboard' ? 'active' : '' )
+                        a(href='/') Dashboard
+                    li(class=pageName === 'cards' ? 'active' : '' )
+                        a(href='/cards') Cards
+                    li(class=pageName === 'issuers' ? 'active' : '' )
+                        a(href='/issuers') Issuers
+                    li(class=pageName === 'users' ? 'active' : '' )
+                        a(href='/users') Users
+                    li
+                        a(href='/logout') Logout
 

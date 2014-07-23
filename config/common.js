@@ -36,3 +36,5 @@ exports.route = {
     ISSUER: '/issuer/:id'
 };
 
+
+exports.cookieTtl = 6 * 3600 * 1000;

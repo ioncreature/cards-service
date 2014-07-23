@@ -56,6 +56,7 @@ $( function(){
         newIssuerContainer.hide();
         newIssuerContainer.find( 'input' ).val( '' );
         issuerContainer.show();
+        hideNewCardType.click();
     });
 
 

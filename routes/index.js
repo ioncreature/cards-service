@@ -7,10 +7,12 @@ var router = require( 'express' ).Router(),
     registry = require( '../lib/registry' ),
     async = require( 'async' ),
     route = registry.get( 'config' ).route,
+    role = registry.get( 'role' ),
     db = registry.get( 'db' ),
     issuers = require( './issuers' ),
     users = require( './users' ),
     cards = require( './cards' ),
+    Account = db.Account,
     Card = db.Card,
     CardType = db.CardType,
     User = db.User,
@@ -18,6 +20,44 @@ var router = require( 'express' ).Router(),
 
 module.exports = router;
 
+
+router.get( route.LOGIN, role.isUnauthorized(), function( req, res ){
+    res.render( 'page/login', {
+        pageName: 'login'
+    });
+});
+
+
+router.post( route.LOGIN, role.isUnauthorized(), function( req, res ){
+    var login = req.body.login,
+        password = req.body.password;
+
+    if ( login && password )
+        Account.login( login, password, function( error, account ){
+            if ( error )
+                res.render( 'page/login', {
+                    pageName: 'login',
+                    errorMsg: error.message
+                });
+            else {
+                req.session.user = account;
+                res.redirect( route.INDEX );
+            }
+        });
+    else
+        res.render( 'page/login', {
+            pageName: 'login',
+            errorMsg: 'Login and password are required'
+        });
+});
+
+
+router.use( role.isAuthorized() );
+
+router.get( route.LOGOUT, function( req, res ){
+    delete req.session.user;
+    res.redirect( route.LOGIN );
+});
 
 router.get( route.INDEX, function( req, res, next ){
     async.parallel({

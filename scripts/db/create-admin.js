@@ -7,19 +7,24 @@ var util = require( '../../lib/util' ),
     db = require( '../../lib/db' ),
     config = util.getConfig( process.argv[2] || 'test' );
 
-
-db.connect( config.mongodb, {}, function( error, connection ){
+db.connect( config.mongodb, {}, function( error ){
     if ( error )
         abort( error );
-    else
-        connection.dropDatabase( function( error ){
+    else {
+        db.Account.create({
+            login: 'admin',
+            password: 'synqera'
+        }, function( error, account ){
             if ( error )
                 abort( error );
+            else if ( !account )
+                abort( new Error('Account was not created') );
             else {
-                console.log( 'Database successfully dropped' );
+                console.log( 'Success!' );
                 process.exit();
             }
-        });
+        })
+    }
 });
 
 

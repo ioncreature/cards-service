@@ -14,7 +14,8 @@ html(lang='en')
         include include/navbar
         #main-content.container
             .buttons-block
-                h2=pageTitle
+                if pageTitle
+                    h2=pageTitle
                 block header-buttons
             block content
         script(src='/public/bower/jquery/dist/jquery.min.js')
