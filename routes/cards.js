@@ -221,7 +221,17 @@ exports.validateCard = function( req, res, next ){
 exports.createCard = function( req, res, next ){
     var card = new Card;
     card.set( req.cardData );
-    card.save( function( error ){
+    async.series({
+        card: function( cb ){
+            card.save( cb );
+        },
+        issuer: function( cb ){
+            if ( card.issuerId )
+                Issuer.increaseCards( card.issuerId, cb );
+            else
+                cb();
+        }
+    }, function( error ){
         if ( error )
             next( error );
         else
@@ -232,24 +242,49 @@ exports.createCard = function( req, res, next ){
 
 exports.updateCard = function( req, res, next ){
     var id = req.params.id,
-        card = req.cardData,
+        cardData = req.cardData,
         goNextCard = req.body.hasOwnProperty( 'next' );
 
     if ( ObjectId.isValid(id) ){
         id = new ObjectId( id );
-        Card.findByIdAndUpdate( id, card, function( error, card ){
+        Card.findById( id, function( error, card ){
             if ( error )
                 next( error );
-            else if ( goNextCard )
-                res.redirect( route.CARD_MODERATE );
-            else
-                res.redirect( util.formatUrl(route.CARD_PAGE, {id: card._id}) );
+            else if ( !card )
+                next( new Error('Card not found') );
+            else {
+                var prevIssuerId = card.issuerId,
+                    queries = {
+                        update: function( cb ){
+                            card.update( cardData, cb );
+                        }
+                    };
+
+                if ( prevIssuerId !== cardData.issuerId ){
+                    if ( prevIssuerId )
+                        queries.prevIssuer = function( cb ){
+                            Issuer.decreaseCards( prevIssuerId, cb );
+                        };
+                    if ( cardData.issuerId )
+                        queries.newIssuer = function( cb ){
+                            Issuer.increaseCards( cardData.issuerId, cb );
+                        };
+                }
+
+                async.series( queries, function( error ){
+                    if ( error )
+                        next( error );
+                    else if ( goNextCard )
+                        res.redirect( route.CARD_MODERATE );
+                    else
+                        res.redirect( util.formatUrl(route.CARD_PAGE, {id: card._id}) );
+                });
+            }
         });
     }
     else
         next( new Error('Invalid ID "' + util.stripTags(id)) );
 };
-
 
 
 exports.moveToModerate = function( req, res, next ){
@@ -267,7 +302,6 @@ exports.moveToModerate = function( req, res, next ){
             res.redirect( route.CARDS_PAGE + '?done' );
         else
             res.redirect( util.formatUrl(route.CARD_PAGE, {id: card._id}) );
-
     });
 };
 

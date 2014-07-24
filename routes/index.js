@@ -80,10 +80,29 @@ router.get( route.INDEX, function( req, res, next ){
                 ]
             }).count( cb );
         },
+        topCities: function( cb ){
+            Card.aggregate([
+                {$project: {city: 1}},
+                {$group: {_id: '$city', count: {$sum: 1}}},
+                {$sort: {count: -1}},
+                {$limit: 5},
+                {$project: {name: '$_id', count: 1, _id: 0}}
+            ]).exec( cb );
+        },
+        topIssuers: function( cb ){
+            Card.aggregate([
+                {$match: {issuerName: {$exists: true}}},
+                {$group: {_id: '$issuerName', count: {$sum: 1}}},
+                {$project: {name: '$_id', count: 1, issuerId: 1, _id: 0}},
+                {$sort: {count: -1}},
+                {$limit: 10}
+            ]).exec( cb );
+        },
         cardTypesCount: function( cb ){
             CardType.count( cb );
         }
     }, function( error, result ){
+        console.log( result.topIssuers );
         if ( error )
             next( error );
         else
@@ -95,7 +114,9 @@ router.get( route.INDEX, function( req, res, next ){
                 cardsCount: result.cardsCount,
                 filledCardsCount: result.filledCardsCount,
                 emptyCardsCount: result.cardsCount - result.filledCardsCount,
-                cardTypesCount: result.cardTypesCount
+                cardTypesCount: result.cardTypesCount,
+                topCities: result.topCities,
+                topIssuers: result.topIssuers
             });
     });
 });

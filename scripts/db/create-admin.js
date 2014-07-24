@@ -23,7 +23,7 @@ db.connect( config.mongodb, {}, function( error ){
                 console.log( 'Success!' );
                 process.exit();
             }
-        })
+        });
     }
 });
 

@@ -16,6 +16,13 @@ block content
                     li.list-group-item Non-filled cards
                         .value= emptyCardsCount
 
+            .panel.panel-cities
+                .panel-heading Top cities by card count
+                ul.list-group
+                    each city in topCities
+                        li.list-group-item= city.name
+                            .value= city.count
+
         .col-md-4
             .panel.panel-issuers
                 .panel-heading Issuers statistics
@@ -24,6 +31,13 @@ block content
                         .value= issuersCount
                     li.list-group-item Total card types
                         .value= cardTypesCount
+
+            .panel.panel-top-issuers
+                .panel-heading Top issuers by card count
+                ul.list-group
+                    each issuer in topIssuers
+                        li.list-group-item= issuer.name
+                            .value= issuer.count
 
         .col-md-4
             .panel.panel-users
