@@ -102,7 +102,6 @@ router.get( route.INDEX, function( req, res, next ){
             CardType.count( cb );
         }
     }, function( error, result ){
-        console.log( result.topIssuers );
         if ( error )
             next( error );
         else
