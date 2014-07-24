@@ -167,7 +167,7 @@ exports.validateCard = function( req, res, next ){
     if ( newTypeName ){
         queries.cardType = function( cb ){
             if ( !cardData.issuerId )
-                cb( new Error('No issuer id is provided') );
+                cb();
             else
                 CardType.create({
                     name: util.stripTags( newTypeName ),
@@ -207,7 +207,7 @@ exports.validateCard = function( req, res, next ){
                 else {
                     if ( result.issuer )
                         cardData.issuerName = result.issuer.name;
-                    if ( queries.cardType )
+                    if ( result.cardType )
                         cardData.typeName = result.cardType.name;
                     next();
                 }

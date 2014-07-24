@@ -6,6 +6,7 @@
 $( function(){
     var issuersSelect = $( 'select[name=issuerId]' ),
         typesSelect = $( 'select[name=typeId]' ),
+        cityInput = $( 'input[name=city]' ),
         updateAndNext = $( '#update-and-next' ),
         newIssuerHelp = $( '#new-issuer-help' ),
         issuerContainer = $( '#exisitng-issuer-container' ),
@@ -15,6 +16,20 @@ $( function(){
         cardTypeContainer = $( '#existing-card-type-container' ),
         hideNewCardType = $( 'span#hide-new-card-type' ),
         newCardTypeContainer = $( '#new-card-type-container' );
+
+    var KEY_ESC = 27,
+        KEY_ENTER = 13,
+        KEY_I = 73;
+
+
+    $( '[rel=popover]' ).popover({
+        html: true,
+        placement: 'left',
+        content: function(){
+            return $( $(this).data('contentwrapper') ).html();
+        }
+    });
+
 
     issuersSelect.chosen();
 
@@ -46,17 +61,12 @@ $( function(){
     });
 
 
-    newIssuerContainer.find( 'input' ).on( 'keyup', function( event ){
-        if ( event.keyCode === 27 )
-            hideNewIssuer.click();
-    });
-
-
     hideNewIssuer.click( function(){
         newIssuerContainer.hide();
         newIssuerContainer.find( 'input' ).val( '' );
         issuerContainer.show();
         hideNewCardType.click();
+        cityInput.focus();
     });
 
 
@@ -70,7 +80,7 @@ $( function(){
 
 
     newCardTypeContainer.find( 'input' ).on( 'keyup', function( event ){
-        if ( event.keyCode === 27 )
+        if ( event.keyCode === KEY_ESC )
             hideNewCardType.click();
     });
 
@@ -79,5 +89,20 @@ $( function(){
         newCardTypeContainer.hide();
         newCardTypeContainer.find( 'input' ).val( '' );
         cardTypeContainer.show();
+    });
+
+
+    cityInput.focus();
+
+
+    $( 'body, input' ).on( 'keydown', function( e ){
+        if ( e.ctrlKey && e.keyCode === KEY_ENTER )
+            updateAndNext.click();
+
+        if ( e.ctrlKey && e.keyCode === KEY_I )
+            newIssuerHelp.click();
+
+        if ( e.keyCode === KEY_ESC )
+            hideNewIssuer.click();
     });
 });

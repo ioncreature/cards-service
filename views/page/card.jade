@@ -8,7 +8,20 @@ block scripts
     script(src='/public/js/Server.js')
     script(src='/public/js/cardPage.js')
 
+
+block header-buttons
+    a#hotkeys-help.btn.btn-default(href='#', data-contentwrapper='#hotkeys', rel='popover')
+        | Show help
+
+
 block content
+    ul#hotkeys.list-group(style='display: none;')
+        li.list-group-item update and next
+            span.badge ctrl + enter
+        li.list-group-item create new issuer
+            span.badge ctrl + i
+        li.list-group-item hide create issuer fields
+            span.badge esc
     form#card(role='form', method='POST', action=postUrl, enctype='multipart/form-data')
         .row
             .col-md-4
@@ -43,6 +56,9 @@ block content
                     label(for='new-issuer') New card type name
                     span#hide-new-card-type.glyphicon.glyphicon-remove
                     input#new-issuer.form-control(type='text', name='newCardType', value=defaultNewType || '')
+
+                if showNextButton
+                    button#update-and-next.btn.btn-success(type='submit') Update and next
             .col-md-4
                 h3 Front image
                 .image-container
@@ -73,6 +89,4 @@ block content
         .row
             .col-md-12.center.offset-top
                 button.btn.btn-success(type='submit')= submitCaption
-                if showNextButton
-                    button#update-and-next.btn.btn-success(type='submit') Update and next
 
