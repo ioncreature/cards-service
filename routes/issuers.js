@@ -14,7 +14,7 @@ var registry = require( '../lib/registry' ),
 
 
 exports.getIssuers = function( req, res, next ){
-    Issuer.find( function( error, issuers ){
+    Issuer.find( {}, null, {sort: {cards: -1}}, function( error, issuers ){
         if ( error )
             next( error );
         else
