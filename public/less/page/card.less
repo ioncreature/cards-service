@@ -50,4 +50,21 @@ body.cards {
             cursor: pointer;
         }
     }
+
+    #card-type-preview {
+        overflow: hidden;
+        .card-preview {
+            float: left;
+            width: 49%;
+            margin: 20px 0;
+            &:first-child {
+                margin-right: 1.9%;
+            }
+
+            img {
+                width: 100%;
+                min-height: 20px;
+            }
+        }
+    }
 }

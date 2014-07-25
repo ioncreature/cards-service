@@ -9,6 +9,8 @@ var Server = {
     ISSUER: '/api/issuer/:id',
     CARDS: '/api/card',
     CARD_TYPES: '/api/card-type',
+    CARD_TYPE_IMG_FRONT: '/api/card-type/:id/img/front',
+    CARD_TYPE_IMG_BACK: '/api/card-type/:id/img/back',
 
     formatUrl: function( route, data ){
         var placeholders = route.match( /:\w+/g ) || [],

@@ -52,12 +52,18 @@ block content
                             option(value=type._id, selected=selected)= type.name
                     p#new-card-type-help.help-block Or you can
                         a(href=route.NEW_ISSUER_PAGE, target='_blank') &nbsp;add new card type
+                    #card-type-preview
+                        .card-preview Example front
+                            img#preview-front.img-responsive.img-thumbnail
+                        .card-preview Example back
+                            img#preview-back.img-responsive.img-thumbnail
                 #new-card-type-container.form-group
                     label(for='new-issuer') New card type name
                     span#hide-new-card-type.glyphicon.glyphicon-remove
                     input#new-card-type.form-control(type='text', name='newCardType', data-default=defaultNewType || '')
                 if showNextButton
                     button#update-and-next.btn.btn-success(type='submit') Update and next
+
             .col-md-4
                 h3 Front image
                 .image-container

@@ -72,6 +72,35 @@ router.get( route.CARD_TYPES, function( req, res, next ){
 });
 
 
+router.get( route.CARD_TYPE_PREVIEW_FRONT, function( req, res, next ){
+    var typeId = req.params.id,
+        field = req.params.type === 'front' ? 'imgFront' : 'imgBack',
+        query = {};
+
+    if ( ObjectId.isValid(typeId) ){
+        typeId = new ObjectId( typeId );
+        query[field + '.data'] = {$exists: true};
+        query.typeId = typeId;
+
+        Card.findOne( query, field, function( error, card ){
+            if ( error )
+                next( error );
+            else if ( !card ){
+                var e = new Error( 'Card with ID "' + util.stripTags( id ) + '" not found' );
+                e.status = 404;
+                next( e );
+            }
+            else {
+                card[field].mimeType && res.contentType( card[field].mimeType );
+                res.send( card[field].data );
+            }
+        });
+    }
+    else
+        next( new Error('Incorrect card type ID "' + util.stripTags(id) + '"') );
+});
+
+
 router.get( route.CARD_IMAGE, function( req, res, next ){
     var id = req.params.id,
         field = req.params.type === 'front' ? 'imgFront' : 'imgBack';
@@ -88,7 +117,7 @@ router.get( route.CARD_IMAGE, function( req, res, next ){
                 next( e );
             }
             else if ( !card[field] || !card[field].data ){
-                e = new Error( 'Card with ID "' + util.stripTags( id ) + '" not found' );
+                e = new Error( 'Card with ID "' + util.stripTags( id ) + '" does not have and image' );
                 e.status = 404;
                 next( e );
             }
