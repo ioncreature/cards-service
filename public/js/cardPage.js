@@ -18,7 +18,8 @@ $( function(){
         hideNewCardType = $( 'span#hide-new-card-type' ),
         newCardTypeContainer = $( '#new-card-type-container' ),
         typePreviewFront = $( '#preview-front' ),
-        typePreviewBack = $( '#preview-back' );
+        typePreviewBack = $( '#preview-back' ),
+        typePreviewContainer = $( '#card-type-preview' );
 
     var KEY_ESC = 27,
         KEY_ENTER = 13,
@@ -52,9 +53,12 @@ $( function(){
         var typeId = typesSelect.val();
 
         if ( typeId ){
+            typePreviewContainer.show();
             typePreviewFront.attr( 'src', Server.formatUrl(Server.CARD_TYPE_IMG_FRONT, {id: typeId}) );
             typePreviewBack.attr( 'src', Server.formatUrl(Server.CARD_TYPE_IMG_BACK, {id: typeId}) );
         }
+        else
+            typePreviewContainer.hide();
     });
     typesSelect.change();
 
