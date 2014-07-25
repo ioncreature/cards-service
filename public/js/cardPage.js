@@ -13,6 +13,7 @@ $( function(){
         hideNewIssuer = $( 'span#hide-new-issuer' ),
         newIssuerContainer = $( '#new-issuer-container' ),
         newCardTypeHelp = $( '#new-card-type-help' ),
+        newCardTypeInput = $( '#new-card-type' ),
         cardTypeContainer = $( '#existing-card-type-container' ),
         hideNewCardType = $( 'span#hide-new-card-type' ),
         newCardTypeContainer = $( '#new-card-type-container' );
@@ -53,9 +54,9 @@ $( function(){
     newIssuerHelp.click( function(){
         issuerContainer.hide();
         newIssuerContainer.show();
-        newIssuerContainer.find( 'input' ).focus();
         cardTypeContainer.hide();
-        newCardTypeContainer.show();
+        newCardTypeHelp.click();
+        newIssuerContainer.find( 'input' ).focus();
     }).find( 'a' ).click( function( event ){
         event.preventDefault();
     });
@@ -74,6 +75,8 @@ $( function(){
         cardTypeContainer.hide();
         newCardTypeContainer.show();
         newCardTypeContainer.find( 'input' ).focus();
+        console.log( newCardTypeInput.data('default') );
+        newCardTypeInput.val( newCardTypeInput.data('default') );
     }).find( 'a' ).click( function( event ){
         event.preventDefault();
     });
@@ -89,6 +92,7 @@ $( function(){
         newCardTypeContainer.hide();
         newCardTypeContainer.find( 'input' ).val( '' );
         cardTypeContainer.show();
+        newCardTypeInput.val( '' );
     });
 
 

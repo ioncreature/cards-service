@@ -55,8 +55,7 @@ block content
                 #new-card-type-container.form-group
                     label(for='new-issuer') New card type name
                     span#hide-new-card-type.glyphicon.glyphicon-remove
-                    input#new-issuer.form-control(type='text', name='newCardType', value=defaultNewType || '')
-
+                    input#new-card-type.form-control(type='text', name='newCardType', data-default=defaultNewType || '')
                 if showNextButton
                     button#update-and-next.btn.btn-success(type='submit') Update and next
             .col-md-4
