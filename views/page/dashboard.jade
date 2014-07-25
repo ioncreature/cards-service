@@ -49,7 +49,7 @@ block content
                         .value= cardsPerUser
 
             .panel.panel-top-users
-                .panel-heading Users statistics
+                .panel-heading Top users by cards count
                 ul.list-group
                     each user in topUsers
                         - var url = formatUrl(route.USER_PAGE, {id: user.id})
