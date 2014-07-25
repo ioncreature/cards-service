@@ -93,7 +93,16 @@ router.get( route.INDEX, function( req, res, next ){
             Card.aggregate([
                 {$match: {issuerName: {$exists: true}}},
                 {$group: {_id: '$issuerName', count: {$sum: 1}}},
-                {$project: {name: '$_id', count: 1, issuerId: 1, _id: 0}},
+                {$project: {name: '$_id', count: 1, _id: 0}},
+                {$sort: {count: -1}},
+                {$limit: 10}
+            ]).exec( cb );
+        },
+        topUsers: function( cb ){
+            Card.aggregate([
+                {$match: {userId: {$exists: true}}},
+                {$group: {_id: '$userId', count: {$sum: 1}}},
+                {$project: {id: '$_id', count: 1, _id: 0}},
                 {$sort: {count: -1}},
                 {$limit: 10}
             ]).exec( cb );
@@ -109,13 +118,15 @@ router.get( route.INDEX, function( req, res, next ){
                 pageName: 'dashboard',
                 pageTitle: 'Dashboard',
                 usersCount: result.usersCount,
+                cardsPerUser: (result.cardsCount / result.usersCount).toFixed( 1 ),
                 issuersCount: result.issuersCount,
                 cardsCount: result.cardsCount,
                 filledCardsCount: result.filledCardsCount,
                 emptyCardsCount: result.cardsCount - result.filledCardsCount,
                 cardTypesCount: result.cardTypesCount,
                 topCities: result.topCities,
-                topIssuers: result.topIssuers
+                topIssuers: result.topIssuers,
+                topUsers: result.topUsers
             });
     });
 });

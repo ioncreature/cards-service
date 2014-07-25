@@ -45,3 +45,14 @@ block content
                 ul.list-group
                     li.list-group-item Total users
                         .value= usersCount
+                    li.list-group-item Cards per user
+                        .value= cardsPerUser
+
+            .panel.panel-top-users
+                .panel-heading Users statistics
+                ul.list-group
+                    each user in topUsers
+                        - var url = formatUrl(route.USER_PAGE, {id: user.id})
+                        li.list-group-item
+                            a(href=url)= user.id
+                            .value= user.count

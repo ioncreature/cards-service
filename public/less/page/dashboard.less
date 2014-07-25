@@ -35,6 +35,10 @@ body.dashboard {
         .colorize-panel( @color-light-violet );
     }
 
+    .panel-top-users {
+        .colorize-panel( @color-light-blue2 );
+    }
+
     .colorize-panel( @color ){
         border-color: darken(@color, 10%);
         color: darken(@color, 60%);
@@ -42,13 +46,16 @@ body.dashboard {
         & > .panel-heading {
             font-family: 'Open Sans Condensed';
             font-size: 1.4em;
-            color: darken(@color, 50%);
+            color: darken(@color, 60%);
             background-color: @color;
             border-color: darken(@color, 10%);
         }
 
         .list-group-item {
             border-color: darken(@color, 10%);
+            a {
+                color: inherit;
+            }
         }
     }
 }
