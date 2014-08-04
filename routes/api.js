@@ -86,7 +86,7 @@ router.get( route.CARD_TYPE_PREVIEW_FRONT, function( req, res, next ){
             if ( error )
                 next( error );
             else if ( !card ){
-                var e = new Error( 'Card with ID "' + util.stripTags( id ) + '" not found' );
+                var e = new Error( 'Card with ID "' + util.stripTags( typeId ) + '" not found' );
                 e.status = 404;
                 next( e );
             }
