@@ -92,8 +92,8 @@ function saveCard( destDir, card ){
         imgFrontPath = join( typeDir, card._id + '-front.' + mime.extension(card.imgFront.mimeType) ),
         imgBackPath = join( typeDir, card._id + '-back.' + mime.extension(card.imgBack.mimeType) );
 
-console.log( imgFrontPath );
-console.log( imgBackPath );
+    console.log( imgFrontPath );
+    console.log( imgBackPath );
 
     if ( !fs.existsSync(destDir) )
         fs.mkdirSync( destDir );
