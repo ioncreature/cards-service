@@ -92,8 +92,6 @@ function saveCard( destDir, card ){
         imgFrontPath = join( typeDir, card._id + '-front.' + mime.extension(card.imgFront.mimeType) ),
         imgBackPath = join( typeDir, card._id + '-back.' + mime.extension(card.imgBack.mimeType) );
 
-console.log( issuerDir );
-console.log( typeDir );
 console.log( imgFrontPath );
 console.log( imgBackPath );
 
