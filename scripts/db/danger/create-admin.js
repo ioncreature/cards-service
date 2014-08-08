@@ -3,8 +3,8 @@
  * @date July 2014
  */
 
-var util = require( '../../lib/util' ),
-    db = require( '../../lib/db' ),
+var util = require( '../../../lib/util' ),
+    db = require( '../../../lib/db' ),
     config = util.getConfig( process.argv[2] || 'test' );
 
 db.connect( config.mongodb, {}, function( error ){

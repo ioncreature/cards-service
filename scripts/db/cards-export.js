@@ -6,10 +6,10 @@
 require( 'colors' );
 
 var program = require( 'commander' ),
-    util = require( '../lib/util' ),
+    util = require( '../../lib/util' ),
     async = require( 'async' ),
     join = require( 'path' ).join,
-    db = require( '../lib/db' ),
+    db = require( '../../lib/db' ),
     Card = db.Card,
     User = db.User,
     fs = require( 'fs' ),
