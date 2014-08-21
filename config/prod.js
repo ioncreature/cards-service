@@ -3,7 +3,7 @@
  * @date July 2014
  */
 
-exports.debug = true;
+exports.debug = false;
 
 exports.port = 8080;
 
