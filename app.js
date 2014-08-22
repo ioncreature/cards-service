@@ -25,10 +25,8 @@ var db = require( './lib/db' );
 
 
 db.connect( config.mongodb, {}, function( error ){
-    if ( error ){
-        console.log( error );
-        process.abort();
-    }
+    if ( error )
+        util.abort( error );
     else {
         registry.set( 'db', db );
         require( './lib/webServer' );
