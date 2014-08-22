@@ -22,6 +22,8 @@ block content
             span.badge ctrl + i
         li.list-group-item hide create issuer fields
             span.badge esc
+    if locked
+        .alert.alert-danger This card is locked by other user
     form#card(role='form', method='POST', action=postUrl, enctype='multipart/form-data')
         .row
             .col-md-4
@@ -62,7 +64,7 @@ block content
                     span#hide-new-card-type.glyphicon.glyphicon-remove
                     input#new-card-type.form-control(type='text', name='newCardType', data-default=defaultNewType || '')
                 if showNextButton
-                    button#update-and-next.btn.btn-success(type='submit') Update and next
+                    button#update-and-next.btn.btn-success(type='submit', disabled=!!locked) Update and next
 
             .col-md-4
                 h3 Front image

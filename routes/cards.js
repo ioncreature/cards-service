@@ -3,7 +3,9 @@
  * @date July 2014
  */
 
-const CARDS_PER_PAGE = 50;
+const
+    CARDS_PER_PAGE = 50,
+    CARD_LOCK_TTL = 5 * 60 * 1000;
 
 var registry = require( '../lib/registry' ),
     fs = require( 'fs' ),
@@ -85,7 +87,7 @@ exports.getCard = function( req, res, next ){
                 next( error );
             else if ( !card )
                 next( new Error('Card with ID ' + id + ' not found') );
-            else
+            else {
                 res.render( 'page/card', {
                     pageName: 'cards',
                     pageTitle: 'Card',
@@ -101,9 +103,12 @@ exports.getCard = function( req, res, next ){
                     haveFrontImg: card.imgFront && !!card.imgFront.mimeType,
                     haveBackImg: card.imgBack && !!card.imgBack.mimeType,
                     showNextButton: true,
+                    locked: Date.now() - card.lastOpen < CARD_LOCK_TTL,
                     defaultNewType: 'Базовый',
                     submitCaption: 'Update'
                 });
+                Card.findByIdAndUpdate( id, {$set: {lastOpen: Date.now()}}, util.noop );
+            }
         });
     }
     else
@@ -294,7 +299,8 @@ exports.moveToModerate = function( req, res, next ){
             {typeId: {$exists: false}},
             {imgBack: {$exists: false}},
             {imgFront: {$exists: false}}
-        ]
+        ],
+        lastOpen: {$lt: Date.now() - CARD_LOCK_TTL}
     }, function( error, card ){
         if ( error )
             next( error );
