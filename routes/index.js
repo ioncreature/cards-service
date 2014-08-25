@@ -95,13 +95,7 @@ router.get( route.INDEX, function( req, res, next ){
             ]).exec( cb );
         },
         topIssuers: function( cb ){
-            Card.aggregate([
-                {$match: {issuerName: {$exists: true}}},
-                {$group: {_id: '$issuerName', count: {$sum: 1}}},
-                {$project: {name: '$_id', count: 1, _id: 0}},
-                {$sort: {count: -1}},
-                {$limit: 10}
-            ]).exec( cb );
+            Issuer.find( {}, null, {sort: {cards: -1}, limit: 10}, cb );
         },
         topUsers: function( cb ){
             Card.aggregate([
