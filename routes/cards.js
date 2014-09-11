@@ -15,6 +15,7 @@ var registry = require( '../lib/registry' ),
     route = registry.get( 'config' ).route,
     db = registry.get( 'db' ),
     Card = db.Card,
+    File = db.File,
     CardType = db.CardType,
     Issuer = db.Issuer,
     ObjectId = db.ObjectId;
@@ -100,8 +101,8 @@ exports.getCard = function( req, res, next ){
                     userId: card.userId || '',
                     showImages: true,
                     postUrl: util.formatUrl( route.CARD_PAGE, {id: id} ),
-                    haveFrontImg: card.imgFront && !!card.imgFront.mimeType,
-                    haveBackImg: card.imgBack && !!card.imgBack.mimeType,
+                    haveFrontImg: card.imgFrontId,
+                    haveBackImg: card.imgBackId,
                     showNextButton: true,
                     locked: Date.now() - card.lastOpen < CARD_LOCK_TTL,
                     defaultNewType: 'Базовый',
@@ -142,6 +143,7 @@ exports.validateCard = function( req, res, next ){
     var cardData = {
             city: filterString( req.body.city || '' )
         },
+        id = req.params.id,
         issuerId = req.body.issuerId && filterString( req.body.issuerId ),
         newIssuerName = req.body.newIssuer,
         typeId = req.body.typeId && filterString( req.body.typeId ),
@@ -199,9 +201,9 @@ exports.validateCard = function( req, res, next ){
         next( error );
     else {
         if ( req.files.imgFront )
-            setFile( cardData, 'imgFront', req.files.imgFront );
+            queries.imgFront = saveFile( req.files.imgFront, id );
         if ( req.files.imgBack )
-            setFile( cardData, 'imgBack', req.files.imgBack );
+            queries.imgBack = saveFile( req.files.imgBack, id );
         delete req.files;
         req.cardData = cardData;
 
@@ -214,6 +216,10 @@ exports.validateCard = function( req, res, next ){
                         cardData.issuerName = result.issuer.name;
                     if ( result.cardType )
                         cardData.typeName = result.cardType.name;
+                    if ( result.imgFront )
+                        cardData.imgFrontId = result.imgFront[0]._id;
+                    if ( result.imgBack )
+                        cardData.imgBackId = result.imgBack[0]._id;
                     next();
                 }
             });
@@ -312,12 +318,19 @@ exports.moveToModerate = function( req, res, next ){
 };
 
 
-function setFile( object, name, fileDescriptor ){
-    if ( !object[name] )
-        object[name] = {};
-    object[name].mimeType = fileDescriptor.mimetype;
-    object[name].data = fs.readFileSync( fileDescriptor.path );
-    fs.unlinkSync( fileDescriptor.path );
+function saveFile( fileDesc, id ){
+    return function( cb ){
+        var file = new File,
+            data = fs.readFileSync( fileDesc.path );
+        file.set({
+            name: fileDesc.originalname,
+            data: data,
+            mimeType: fileDesc.mimetype,
+            fileSize: data.length,
+            linkedEntity: id || undefined
+        });
+        file.save( cb );
+    };
 }
 
 

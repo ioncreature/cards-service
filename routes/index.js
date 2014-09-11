@@ -31,19 +31,15 @@ var s;
 router.post( route.LOGIN, role.isUnauthorized(), function( req, res ){
     var login = req.body.login,
         password = req.body.password;
-    s = Date.now();
-    console.log( 1 );
 
     if ( login && password )
         Account.login( login, password, function( error, account ){
-            console.log( 2, Date.now() - s );
             if ( error )
                 res.render( 'page/login', {
                     pageName: 'login',
                     errorMsg: error.message
                 });
             else {
-                console.log( 3, Date.now() - s );
                 req.session.user = account;
                 res.redirect( route.INDEX );
             }
@@ -64,7 +60,6 @@ router.get( route.LOGOUT, function( req, res ){
 });
 
 router.get( route.INDEX, function( req, res, next ){
-    console.log( 4, Date.now() - s );
     async.parallel({
         usersCount: function( cb ){
             User.count( cb );
@@ -110,7 +105,6 @@ router.get( route.INDEX, function( req, res, next ){
             CardType.count( cb );
         }
     }, function( error, result ){
-        console.log( 5, Date.now() - s );
         if ( error )
             next( error );
         else

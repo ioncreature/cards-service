@@ -11,6 +11,7 @@ var router = require( 'express' ).Router(),
     route = config.route,
     db = registry.get( 'db' ),
     Issuer = db.Issuer,
+    File = db.File,
     CardType = db.CardType,
     Card = db.Card,
     ObjectId = db.ObjectId;
@@ -74,12 +75,12 @@ router.get( route.CARD_TYPES, function( req, res, next ){
 
 router.get( route.CARD_TYPE_PREVIEW_FRONT, function( req, res, next ){
     var typeId = req.params.id,
-        field = req.params.type === 'front' ? 'imgFront' : 'imgBack',
+        field = req.params.type === 'front' ? 'imgFrontId' : 'imgBackId',
         query = {};
 
     if ( ObjectId.isValid(typeId) ){
         typeId = new ObjectId( typeId );
-        query[field + '.data'] = {$exists: true};
+        query[field] = {$exists: true};
         query.typeId = typeId;
 
         Card.findOne( query, field, function( error, card ){
@@ -90,10 +91,11 @@ router.get( route.CARD_TYPE_PREVIEW_FRONT, function( req, res, next ){
                 e.status = 404;
                 next( e );
             }
-            else {
-                card[field].mimeType && res.contentType( card[field].mimeType );
-                res.send( card[field].data );
-            }
+            else
+                File.findOne( card[field], function( error, file ){
+                    file.mimeType && res.type( file.mimeType );
+                    res.send( file.data );
+                });
         });
     }
     else
@@ -103,7 +105,7 @@ router.get( route.CARD_TYPE_PREVIEW_FRONT, function( req, res, next ){
 
 router.get( route.CARD_IMAGE, function( req, res, next ){
     var id = req.params.id,
-        field = req.params.type === 'front' ? 'imgFront' : 'imgBack';
+        field = req.params.type === 'front' ? 'imgFrontId' : 'imgBackId';
 
     if ( ObjectId.isValid(id) ){
         id = new ObjectId( id );
@@ -116,15 +118,25 @@ router.get( route.CARD_IMAGE, function( req, res, next ){
                 e.status = 404;
                 next( e );
             }
-            else if ( !card[field] || !card[field].data ){
+            else if ( !card[field] ){
                 e = new Error( 'Card with ID "' + util.stripTags( id ) + '" does not have and image' );
                 e.status = 404;
                 next( e );
             }
-            else {
-                card[field].mimeType && res.contentType( card[field].mimeType );
-                res.send( card[field].data );
-            }
+            else
+                File.findOne( card[field], function( error, file ){
+                    if ( error )
+                        next( error );
+                    else if ( !file ){
+                        e = new Error( 'File not found' );
+                        e.status = 404;
+                        next( e );
+                    }
+                    else {
+                        file.mimeType && res.type( file.mimeType );
+                        res.send( file.data );
+                    }
+                });
         });
     }
     else

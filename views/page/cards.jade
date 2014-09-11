@@ -32,12 +32,12 @@ block content
                     td= card.issuerName
                     td= card.typeName
                     td.center
-                        if card.imgFront && card.imgFront.mimeType
+                        if card.imgFrontId
                             span.glyphicon.glyphicon-ok
                         else
                             span.glyphicon.glyphicon-remove
                     td.center
-                        if card.imgBack && card.imgBack.mimeType
+                        if card.imgBackId
                             span.glyphicon.glyphicon-ok
                         else
                             span.glyphicon.glyphicon-remove

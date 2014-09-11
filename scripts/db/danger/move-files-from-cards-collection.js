@@ -19,16 +19,21 @@ db.connect( config.mongodb, {}, function( error ){
         Card.count( null, function( error, count ){
             if ( error )
                 util.abort( error );
-            else
+            else {
+                console.log( 'Total cards:', count );
                 moveFiles( count );
+            }
         });
 
 });
 
 
 function moveFiles( cardsCount ){
-    var barTpl = '[:bar] :percent (:current/:total) estimated time :etas',
+    var start = Date.now(),
+        curr = 0,
+        barTpl = '[:bar] :percent (:current/:total) estimated time :etas',
         bar = new ProgressBar( barTpl, {total: cardsCount, width: 40} );
+
     Card.find().stream()
         .on( 'data', function( card ){
             async.parallel({
@@ -37,8 +42,9 @@ function moveFiles( cardsCount ){
                     if ( img && img.data ){
                         var file = new File;
                         file.set({
-                            fileName: card._id + '-front.' + mime.extension( img.mimeType ),
+                            name: card._id + '-front.' + mime.extension( img.mimeType ),
                             data: img.data,
+                            mimeType: img.mimeType,
                             fileSize: img.data.length,
                             linkedEntity: card._id
                         });
@@ -50,8 +56,9 @@ function moveFiles( cardsCount ){
                     if ( img && img.data ){
                         var file = new File;
                         file.set({
-                            fileName: card._id + '-back.' + mime.extension( img.mimeType ),
+                            name: card._id + '-back.' + mime.extension( img.mimeType ),
                             data: img.data,
+                            mimeType: img.mimeType,
                             fileSize: img.data.length,
                             linkedEntity: card._id
                         });
@@ -59,21 +66,27 @@ function moveFiles( cardsCount ){
                     }
                 }
             }, function( error, files ){
-                bar.tick();
                 if ( error )
                     util.abort();
                 else {
-                    card.imgFrontId = files.front._id;
-                    card.imgBackId = files.back._id;
-                    card.save();
+                    card.imgFrontId = files.front[0]._id;
+                    card.imgBackId = files.back[0]._id;
+                    card.save( function( error ){
+                        if ( error )
+                            util.abort( error );
+                        else {
+                            bar.tick();
+                            if ( ++curr >= cardsCount ){
+                                console.log( '\nSuccess!' );
+                                console.log( 'Time spent:', ((Date.now() - start) / 1000).toFixed(2) + ' sec' );
+                                process.exit();
+                            }
+                        }
+                    });
                 }
             });
         })
         .on( 'error', function( error ){
             util.abort( error );
-        })
-        .on( 'close', function(){
-            console.log( '\nSuccess!' );
-            process.exit();
         });
 }
