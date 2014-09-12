@@ -10,16 +10,23 @@ var program = require( 'commander' ),
     async = require( 'async' ),
     join = require( 'path' ).join,
     exec = require( 'child_process' ).exec,
-    ProgressBar = require( 'progress' );
+    mkdirp = require( 'mkdirp' );
 
 program
     .option( '-c, --config [name]', 'set the config name to use, default is "test"', 'test' )
-    .option( '-C, --collection [name]', 'set collection to backup' );
+    .option( '-C, --collection <name>', 'set collection to backup' )
+    .option( '-o, --out [path]', 'set directory path to export' );
 program.parse( process.argv );
+
+if ( !program.collection )
+    util.abort( new Error('--collection parameter is required') );
 
 var config = util.getConfig( program.config ),
     mongodb = config.mongodb[0],
-    command = 'mongoexport --host ' + mongodb.host + ':' + mongodb.port + ' --db ' + mongodb.dbname;
+    command = 'mongoexport --host ' + mongodb.host + ':' + mongodb.port + ' --db ' + mongodb.dbname,
+    outDir = program.out || join( config.backupDir, mongodb.dbname );
+
+mkdirp.sync( outDir );
 
 if ( mongodb.auth ){
     var auth = mongodb.auth.split( ':' );
@@ -27,11 +34,11 @@ if ( mongodb.auth ){
     command += ' --password ' + auth[1];
 }
 
-if ( program.collection )
-    command += ' --collection ' + program.collection;
+command += ' --collection ' + program.collection;
+command += ' --out ' + join( outDir, program.collection +'.json' );
 
 var start = Date.now(),
-    child = exec( command, function( error ){
+    child = exec( command, function( error, strout, errout ){
         if ( error )
             util.abort( error );
         else {
@@ -40,7 +47,3 @@ var start = Date.now(),
             process.exit();
         }
     });
-
-child.on( 'data', function( data ){
-    console.log( data );
-})

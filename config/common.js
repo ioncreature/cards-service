@@ -6,6 +6,7 @@
 exports.title = 'Cards Service';
 exports.processTitle = 'cards-service';
 exports.uploadsDir = require( 'path' ).join( __dirname, '..', 'uploads' );
+exports.backupDir = require( 'path' ).join( __dirname, '..', 'backup' );
 
 exports.route = {
     PUBLIC: '/public',

@@ -9,6 +9,7 @@
         "express": "4.4.x",
         "connect-acl": "0.2.x",
         "serve-favicon": "2.1.x",
+        "mkdirp": "0.5.x",
         "body-parser": "1.4.x",
         "multer": "0.1.x",
         "express-session": "1.7.x",
