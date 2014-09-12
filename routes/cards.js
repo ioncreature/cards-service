@@ -30,7 +30,7 @@ exports.getCards = function( req, res, next ){
             Card.count( query, cb );
         },
         cards: function( cb ){
-            Card.find( {}, '-imgFront.data -imgBack.data', {
+            Card.find( {}, '', {
                 limit: CARDS_PER_PAGE,
                 skip: ( page - 1 ) * CARDS_PER_PAGE
             }, cb );
@@ -67,7 +67,7 @@ exports.getCard = function( req, res, next ){
         id = new ObjectId( id );
         async.series({
             card: function( cb ){
-                Card.findById( id, '-imgFront.data -imgBack.data', function( error, data ){
+                Card.findById( id, '', function( error, data ){
                     card = data;
                     cb( error, data );
                 });
@@ -303,8 +303,8 @@ exports.moveToModerate = function( req, res, next ){
         $or: [
             {issuerId: {$exists: false}},
             {typeId: {$exists: false}},
-            {imgBack: {$exists: false}},
-            {imgFront: {$exists: false}}
+            {imgBackId: {$exists: false}},
+            {imgFrontId: {$exists: false}}
         ],
         lastOpen: {$lt: Date.now() - CARD_LOCK_TTL}
     }, function( error, card ){

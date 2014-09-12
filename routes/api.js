@@ -5,6 +5,7 @@
 
 var router = require( 'express' ).Router(),
     util = require( '../lib/util' ),
+    mime = require( 'mime' ),
     registry = require( '../lib/registry' ),
     config = registry.get( 'config' ),
     packageInfo = util.getPackageInfo(),
@@ -93,7 +94,8 @@ router.get( route.CARD_TYPE_PREVIEW_FRONT, function( req, res, next ){
             }
             else
                 File.findOne( card[field], function( error, file ){
-                    file.mimeType && res.type( file.mimeType );
+                    res.type( file.mimeType || mime.lookup( file.name ) );
+                    res.set( 'Content-Disposition', 'filename="' + file.name + '"' );
                     res.send( file.data );
                 });
         });
@@ -133,7 +135,8 @@ router.get( route.CARD_IMAGE, function( req, res, next ){
                         next( e );
                     }
                     else {
-                        file.mimeType && res.type( file.mimeType );
+                        res.type( file.mimeType || mime.lookup(file.name) );
+                        res.set( 'Content-Disposition', 'filename="' + file.name + '"' );
                         res.send( file.data );
                     }
                 });

@@ -73,7 +73,7 @@ block content
                     if showImages
                         if haveFrontImg
                             - var img1Url = formatUrl( route.API_PREFIX + route.CARD_IMAGE, {id: id, type: 'front'} );
-                            a(href=img1Url)
+                            a(href=img1Url, target='_blank')
                                 img.img-responsive.img-thumbnail(src=img1Url)
                         else
                             .alert.alert-danger(role='alert')
@@ -86,7 +86,7 @@ block content
                     if showImages
                         if haveBackImg
                             - var img2Url = formatUrl( route.API_PREFIX + route.CARD_IMAGE, {id: id, type: 'back'} );
-                            a(href=img2Url)
+                            a(href=img2Url, target='_blank')
                                 img.img-responsive.img-thumbnail(src=img2Url)
                         else
                             .alert.alert-danger(role='alert')
