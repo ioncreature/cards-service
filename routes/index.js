@@ -75,8 +75,8 @@ router.get( route.INDEX, function( req, res, next ){
                 $and: [
                     {issuerId: {$exists: true}},
                     {typeId: {$exists: true}},
-                    {imgBack: {$exists: true}},
-                    {imgFront: {$exists: true}}
+                    {imgBackId: {$exists: true}},
+                    {imgFrontId: {$exists: true}}
                 ]
             }).count( cb );
         },
