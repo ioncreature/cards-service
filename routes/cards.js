@@ -170,7 +170,6 @@ exports.validateCard = function( req, res, next ){
             error = new Error( 'Invalid issuer ID "' + util.stripTags(issuerId) + '"' );
     }
 
-
     if ( newTypeName ){
         queries.cardType = function( cb ){
             if ( !cardData.issuerId )
@@ -329,6 +328,7 @@ function saveFile( fileDesc, id ){
             fileSize: data.length,
             linkedEntity: id || undefined
         });
+        fs.unlinkSync( fileDesc.path );
         file.save( cb );
     };
 }

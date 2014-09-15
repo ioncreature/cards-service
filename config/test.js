@@ -4,6 +4,7 @@
  */
 
 exports.debug = true;
+exports.quiet = true;
 
 exports.port = 3000;
 
@@ -14,3 +15,8 @@ exports.mongodb = [
         dbname: 'cardsTest'
     }
 ];
+
+exports.auth = {
+    login: 'admin',
+    password: 'synqera'
+};

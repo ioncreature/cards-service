@@ -26,7 +26,6 @@ router.get( route.LOGIN, role.isUnauthorized(), function( req, res ){
         pageName: 'login'
     });
 });
-var s;
 
 router.post( route.LOGIN, role.isUnauthorized(), function( req, res ){
     var login = req.body.login,
@@ -131,10 +130,8 @@ router.get( route.NEW_CARD_PAGE, cards.getNewCard );
 router.post( route.NEW_CARD_PAGE, cards.validateCard, cards.createCard );
 router.get( route.CARD_PAGE, cards.getCard );
 router.post( route.CARD_PAGE, cards.validateCard, cards.updateCard );
-
 router.get( route.USERS_PAGE, users.getUsers );
 router.get( route.USER_PAGE, users.getUser );
-
 router.get( route.ISSUERS_PAGE, issuers.getIssuers );
 router.get( route.NEW_ISSUER_PAGE, issuers.getNewIssuer );
 router.post( route.NEW_ISSUER_PAGE, issuers.createNewIssuer );

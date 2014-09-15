@@ -29,6 +29,12 @@ db.connect( config.mongodb, {}, function( error ){
         util.abort( error );
     else {
         registry.set( 'db', db );
-        require( './lib/webServer' );
+        var server = require( './lib/webServer' );
+        server( function( error ){
+            if ( error )
+                util.abort( error );
+            else
+                console.log( 'Server listening on port %s', config.port );
+        });
     }
 });

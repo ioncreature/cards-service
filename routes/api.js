@@ -32,9 +32,7 @@ router.get( route.ISSUERS, function( req, res, next ){
     var sort = String( req.query.sort || '' ),
         search = String( req.query.search || '' ),
         conditions = {},
-        options = {
-            limit: 10
-        };
+        options = {limit: 10};
 
     if ( sort ){
         var sortField = sort.split( ',' )[0],
@@ -72,6 +70,59 @@ router.get( route.CARD_TYPES, function( req, res, next ){
             res.json( docs );
     });
 });
+
+
+router.post( route.CARDS, function( req, res, next ){
+    var userId = req.session.user._id,
+        card = new Card,
+        queries = {};
+
+    card.userId = userId;
+    if ( req.files.front )
+        queries.front = saveFile( req.files.front, id );
+    if ( req.files.back )
+        queries.back = saveFile( req.files.back, id );
+
+    if ( req.files.front || req.files.back )
+        async.parallel( queries, function( error, res ){
+            if ( error )
+                next( error );
+            else {
+                card.imgFrontId = res.front[0]._id;
+                card.imgBackId = res.back[0]._id;
+                card.save( function( error, doc ){
+                    if ( error )
+                        next( error );
+                    else {
+                        res.json({
+                            id: doc._id,
+                            imgFrontId: doc.imgFrontId,
+                            imgBackId: doc.imgBackId
+                        });
+                    }
+                });
+            }
+        });
+    else
+        next( new Error('Required at least one') );
+});
+
+
+function saveFile( fileDesc, id ){
+    return function( cb ){
+        var file = new File,
+            data = fs.readFileSync( fileDesc.path );
+        file.set({
+            name: fileDesc.originalname,
+            data: data,
+            mimeType: fileDesc.mimetype,
+            fileSize: data.length,
+            linkedEntity: id || undefined
+        });
+        fs.unlinkSync( fileDesc.path );
+        file.save( cb );
+    };
+}
 
 
 router.get( route.CARD_TYPE_PREVIEW_FRONT, function( req, res, next ){
