@@ -15,6 +15,15 @@ describe( 'user API', function(){
     var user,
         card;
 
+    it( 'should forbid querying without auth', function( done ){
+        request( app )
+            .get( route.API_PREFIX + route.USERS )
+            .expect( 403 )
+            .accept( 'json' )
+            .end( done )
+    });
+
+
     it( 'should return users list', function( done ){
         request( app )
             .get( route.API_PREFIX + route.USERS )
@@ -81,6 +90,15 @@ describe( 'user API', function(){
             .set( 'Cookie', registry.get('cookie') )
             .accept( 'image/jpeg' )
             .expect( 200 )
+            .end( done );
+    });
+
+
+    it( 'should return list of user cards', function( done ){
+        request( app )
+            .get( util.formatUrl(route.API_PREFIX + route.USER_CARDS, {id: user._id}) )
+            .set( 'Cookie', registry.get('cookie') )
+            .accept( 'json' )
             .end( done );
     });
 });

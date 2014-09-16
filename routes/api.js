@@ -11,6 +11,7 @@ var router = require( 'express' ).Router(),
     packageInfo = util.getPackageInfo(),
     route = config.route,
     db = registry.get( 'db' ),
+    role = registry.get( 'role' ),
     Issuer = db.Issuer,
     File = db.File,
     CardType = db.CardType,
@@ -28,6 +29,13 @@ router.get( route.API_INFO, function( req, res ){
         version: packageInfo.version
     });
 });
+
+
+router.use( role.isAuthorized( function( req, res, next ){
+    var e = new Error( 'Forbidden' );
+    e.status = 403;
+    next( e );
+}));
 
 
 router.get( route.USERS, userApi.getUsers );
