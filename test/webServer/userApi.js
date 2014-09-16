@@ -99,6 +99,16 @@ describe( 'user API', function(){
             .get( util.formatUrl(route.API_PREFIX + route.USER_CARDS, {id: user._id}) )
             .set( 'Cookie', registry.get('cookie') )
             .accept( 'json' )
-            .end( done );
+            .end( function( error, res ){
+                if ( error )
+                    done( error );
+                else {
+                    var list = res.body;
+                    expect( list.some(function( item ){
+                        return item._id === card._id;
+                    })).to.be.true;
+                    done();
+                }
+            });
     });
 });
