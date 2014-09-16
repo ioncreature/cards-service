@@ -34,7 +34,7 @@ describe( 'pages', function(){
             .get( route.INDEX )
             .set( 'Cookie', cookie )
             .expect( 200 )
-            .expect( 'Content-Type', /html/ )
+            .accept( 'html' )
             .end( done );
     });
 
@@ -44,7 +44,7 @@ describe( 'pages', function(){
             .get( route.CARDS_PAGE )
             .set( 'Cookie', cookie )
             .expect( 200 )
-            .expect( 'Content-Type', /html/ )
+            .accept( 'html' )
             .end( done );
     });
 

@@ -12,7 +12,7 @@ exports.mongodb = [
     {
         host: 'localhost',
         port: 27017,
-        dbname: 'cardsTest'
+        dbname: 'cardsDev'
     }
 ];
 

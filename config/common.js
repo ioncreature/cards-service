@@ -30,6 +30,7 @@ exports.route = {
     API_INFO: '/',
     USERS: '/user',
     USER: '/user/:id',
+    USER_CARDS: '/user/:id/cards',
     USER_LOGIN: '/user/:id',
     CARDS: '/card',
     CARD: '/card/:id',

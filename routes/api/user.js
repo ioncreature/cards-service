@@ -3,15 +3,19 @@
  * @date September 2014
  */
 
+const DEFAULT_LIMIT = 100;
+
 var registry = require( '../../lib/registry' ),
     async = require( 'async' ),
     util = require( '../../lib/util' ),
     route = registry.get( 'config' ).route,
     db = registry.get( 'db' ),
-    User = db.User;
+    User = db.User,
+    Card = db.Card,
+    ObjectId = db.ObjectId;
 
 
-exports.create = function( req, res, next ){
+exports.createUser = function( req, res, next ){
     var b = req.body,
         user = new User;
 
@@ -25,6 +29,45 @@ exports.create = function( req, res, next ){
         if ( error )
             next( error );
         else
-            res.json( {id: doc._id} );
+            res.json( doc );
     });
 };
+
+
+exports.getUsers = function( req, res, next ){
+    var skip = Number( req.query.skip ) || 0,
+        limit = Number( req.query.limit ) || DEFAULT_LIMIT;
+
+    User.find().skip( skip ).limit( limit ).exec( function( error, list ){
+        if ( error )
+            next( error );
+        else
+            res.json( list );
+    });
+};
+
+
+exports.getUser = function( req, res, next ){
+    var id = req.params.id;
+
+    if ( ObjectId.isValid(id) )
+        User.findOne( ObjectId(id) );
+    else
+        next( new Error('User id is invalid') );
+};
+
+
+exports.getUserCards = function( req, res, next ){
+    var userId = req.params.id;
+
+    if ( ObjectId.isValid(userId) )
+        Card.find( {userId: userId}, function( error, list ){
+            if ( error )
+                next( error );
+            else
+                res.json( list );
+        });
+    else
+        next( new Error('User id is invalid') );
+};
+

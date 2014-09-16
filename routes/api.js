@@ -15,7 +15,9 @@ var router = require( 'express' ).Router(),
     File = db.File,
     CardType = db.CardType,
     Card = db.Card,
-    ObjectId = db.ObjectId;
+    ObjectId = db.ObjectId,
+    userApi = require( './api/user' ),
+    cardApi = require( './api/card' );
 
 module.exports = router;
 
@@ -26,6 +28,15 @@ router.get( route.API_INFO, function( req, res ){
         version: packageInfo.version
     });
 });
+
+
+router.get( route.USERS, userApi.getUsers );
+router.get( route.USER_CARDS, userApi.getUserCards );
+router.post( route.USERS, userApi.createUser );
+
+router.get( route.CARDS, cardApi.getCards );
+router.post( route.CARDS, cardApi.createCard );
+router.get( route.CARD_IMAGE, cardApi.getPhoto );
 
 
 router.get( route.ISSUERS, function( req, res, next ){
@@ -72,59 +83,6 @@ router.get( route.CARD_TYPES, function( req, res, next ){
 });
 
 
-router.post( route.CARDS, function( req, res, next ){
-    var userId = req.session.user._id,
-        card = new Card,
-        queries = {};
-
-    card.userId = userId;
-    if ( req.files.front )
-        queries.front = saveFile( req.files.front, id );
-    if ( req.files.back )
-        queries.back = saveFile( req.files.back, id );
-
-    if ( req.files.front || req.files.back )
-        async.parallel( queries, function( error, res ){
-            if ( error )
-                next( error );
-            else {
-                card.imgFrontId = res.front[0]._id;
-                card.imgBackId = res.back[0]._id;
-                card.save( function( error, doc ){
-                    if ( error )
-                        next( error );
-                    else {
-                        res.json({
-                            id: doc._id,
-                            imgFrontId: doc.imgFrontId,
-                            imgBackId: doc.imgBackId
-                        });
-                    }
-                });
-            }
-        });
-    else
-        next( new Error('Required at least one') );
-});
-
-
-function saveFile( fileDesc, id ){
-    return function( cb ){
-        var file = new File,
-            data = fs.readFileSync( fileDesc.path );
-        file.set({
-            name: fileDesc.originalname,
-            data: data,
-            mimeType: fileDesc.mimetype,
-            fileSize: data.length,
-            linkedEntity: id || undefined
-        });
-        fs.unlinkSync( fileDesc.path );
-        file.save( cb );
-    };
-}
-
-
 router.get( route.CARD_TYPE_PREVIEW_FRONT, function( req, res, next ){
     var typeId = req.params.id,
         field = req.params.type === 'front' ? 'imgFrontId' : 'imgBackId',
@@ -153,48 +111,6 @@ router.get( route.CARD_TYPE_PREVIEW_FRONT, function( req, res, next ){
     }
     else
         next( new Error('Incorrect card type ID "' + util.stripTags(id) + '"') );
-});
-
-
-router.get( route.CARD_IMAGE, function( req, res, next ){
-    var id = req.params.id,
-        field = req.params.type === 'front' ? 'imgFrontId' : 'imgBackId';
-
-    if ( ObjectId.isValid(id) ){
-        id = new ObjectId( id );
-        Card.findById( id, field, function( error, card ){
-            var e;
-            if ( error )
-                next( error );
-            else if ( !card ){
-                e = new Error( 'Card with ID "' + util.stripTags( id ) + '" not found' );
-                e.status = 404;
-                next( e );
-            }
-            else if ( !card[field] ){
-                e = new Error( 'Card with ID "' + util.stripTags( id ) + '" does not have and image' );
-                e.status = 404;
-                next( e );
-            }
-            else
-                File.findOne( card[field], function( error, file ){
-                    if ( error )
-                        next( error );
-                    else if ( !file ){
-                        e = new Error( 'File not found' );
-                        e.status = 404;
-                        next( e );
-                    }
-                    else {
-                        res.type( file.mimeType || mime.lookup(file.name) );
-                        res.set( 'Content-Disposition', 'filename="' + file.name + '"' );
-                        res.send( file.data );
-                    }
-                });
-        });
-    }
-    else
-        next( new Error('Incorrect card ID "' + util.stripTags(id) + '"') );
 });
 
 
