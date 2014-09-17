@@ -37,6 +37,7 @@ router.get( route.USER, userApi.getUser );
 router.get( route.CARDS, cardApi.getCards );
 router.post( route.CARDS, cardApi.createCard );
 router.get( route.CARD_IMAGE, cardApi.getPhoto );
+router.get( route.FILE, cardApi.getFile );
 
 
 router.use( role.isAuthorized( function( req, res, next ){

@@ -32,6 +32,7 @@ exports.route = {
     USER: '/user/:id',
     USER_CARDS: '/user/:id/cards',
     USER_LOGIN: '/user/:id',
+    FILE: '/file/:id',
     CARDS: '/card',
     CARD: '/card/:id',
     CARD_IMAGE: '/card/:id/img/:type',

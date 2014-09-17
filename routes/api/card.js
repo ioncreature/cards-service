@@ -133,9 +133,27 @@ exports.getPhoto = function( req, res, next ){
 };
 
 
-function findUser( id, callback ){
+exports.getFile = function( req, res, next ){
+    var id = req.params.id;
 
-}
+    if ( ObjectId.isValid(id) )
+        File.findById( id, function( error, file ){
+            if ( error )
+                next( error );
+            else if ( !file ){
+                var e = new Error( 'File not found' );
+                e.status = 404;
+                next( e );
+            }
+            else {
+                res.type( file.mimeType || mime.lookup(file.name) );
+                res.set( 'Content-Disposition', 'filename="' + file.name + '"' );
+                res.send( file.data );
+            }
+        });
+    else
+        next( new Error('File id is invalid') );
+};
 
 
 function saveFile( fileDesc, id ){

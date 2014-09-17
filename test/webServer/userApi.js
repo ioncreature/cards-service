@@ -71,7 +71,7 @@ describe( 'user API', function(){
             .end( function( error, res ){
                 if ( error )
                     done( error );
-                else  {
+                else {
                     var u = res.body;
                     expect( u._id ).to.equal( user._id );
                     expect( u.name ).to.equal( user.name );
@@ -106,6 +106,16 @@ describe( 'user API', function(){
         request( app )
             .get( util.formatUrl(route.API_PREFIX + route.CARD_IMAGE, {id: card._id, type: 'front'}) )
             .query( {userId: user._id} )
+            .set( 'Cookie', registry.get('cookie') )
+            .accept( 'image/jpeg' )
+            .expect( 200 )
+            .end( done );
+    });
+
+
+    it( 'should return image by its id' , function( done ){
+        request( app )
+            .get( util.formatUrl(route.API_PREFIX + route.FILE, {id: card.imgFrontId}) )
             .set( 'Cookie', registry.get('cookie') )
             .accept( 'image/jpeg' )
             .expect( 200 )
