@@ -9,6 +9,7 @@ const
 
 var util = require( '../../lib/util' ),
     async = require( 'async' ),
+    mime = require( 'mime' ),
     fs = require( 'fs' ),
     registry = require( '../../lib/registry' ),
     db = registry.get( 'db' ),
