@@ -31,6 +31,13 @@ router.get( route.API_INFO, function( req, res ){
 });
 
 
+router.get( route.USER_CARDS, userApi.getUserCards );
+router.post( route.USERS, userApi.createUser );
+router.get( route.CARDS, cardApi.getCards );
+router.post( route.CARDS, cardApi.createCard );
+router.get( route.CARD_IMAGE, cardApi.getPhoto );
+
+
 router.use( role.isAuthorized( function( req, res, next ){
     var e = new Error( 'Forbidden' );
     e.status = 403;
@@ -39,12 +46,6 @@ router.use( role.isAuthorized( function( req, res, next ){
 
 
 router.get( route.USERS, userApi.getUsers );
-router.get( route.USER_CARDS, userApi.getUserCards );
-router.post( route.USERS, userApi.createUser );
-
-router.get( route.CARDS, cardApi.getCards );
-router.post( route.CARDS, cardApi.createCard );
-router.get( route.CARD_IMAGE, cardApi.getPhoto );
 
 
 router.get( route.ISSUERS, function( req, res, next ){
