@@ -33,6 +33,7 @@ router.get( route.API_INFO, function( req, res ){
 
 router.get( route.USER_CARDS, userApi.getUserCards );
 router.post( route.USERS, userApi.createUser );
+router.get( route.USER, userApi.getUser );
 router.get( route.CARDS, cardApi.getCards );
 router.post( route.CARDS, cardApi.createCard );
 router.get( route.CARD_IMAGE, cardApi.getPhoto );

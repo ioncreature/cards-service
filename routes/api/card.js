@@ -55,6 +55,8 @@ exports.createCard = function( req, res, next ){
                     cardData.city = util.stripTags( b.city );
                 if ( b.issuerId && ObjectId.isValid(b.issuerId) )
                     cardData.issuerId = b.issuerId;
+                if ( b.typeId && ObjectId.isValid(b.typeId) )
+                    cardData.typeId = b.typeId;
 
                 if ( !files.imgBack && !files.imgFront )
                     next( new Error('Required at least one of imgBack or imgFront parameters') );

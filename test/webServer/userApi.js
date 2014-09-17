@@ -62,6 +62,25 @@ describe( 'user API', function(){
     });
 
 
+    it( 'should return user by id', function( done ){
+        request( app )
+            .get( util.formatUrl(route.API_PREFIX + route.USER, {id: user._id}) )
+            .set( 'Cookie', registry.get('cookie') )
+            .expect( 200 )
+            .accept( 'json' )
+            .end( function( error, res ){
+                if ( error )
+                    done( error );
+                else  {
+                    var u = res.body;
+                    expect( u._id ).to.equal( user._id );
+                    expect( u.name ).to.equal( user.name );
+                    done();
+                }
+            });
+    });
+
+
     it( 'should create card', function( done ){
         request( app )
             .post( route.API_PREFIX + route.CARDS )

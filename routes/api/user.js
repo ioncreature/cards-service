@@ -51,7 +51,17 @@ exports.getUser = function( req, res, next ){
     var id = req.params.id;
 
     if ( ObjectId.isValid(id) )
-        User.findOne( ObjectId(id) );
+        User.findById( id, function( error, user ){
+            if ( error )
+                next( error );
+            else if ( !user ){
+                var e = new Error( 'User not found' );
+                e.status = 404;
+                next( e );
+            }
+            else
+                res.json( user );
+        });
     else
         next( new Error('User id is invalid') );
 };
