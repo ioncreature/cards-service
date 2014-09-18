@@ -12,6 +12,7 @@ var router = require( 'express' ).Router(),
     issuers = require( './issuers' ),
     users = require( './users' ),
     cards = require( './cards' ),
+    accounts = require( './accounts' ),
     Account = db.Account,
     Card = db.Card,
     CardType = db.CardType,
@@ -137,3 +138,5 @@ router.get( route.NEW_ISSUER_PAGE, issuers.getNewIssuer );
 router.post( route.NEW_ISSUER_PAGE, issuers.createNewIssuer );
 router.get( route.ISSUER_PAGE, issuers.getIssuer );
 router.post( route.ISSUER_PAGE, issuers.updateIssuer );
+router.get( route.ACCOUNTS_PAGE, accounts.getAccounts );
+router.get( route.ACCOUNT_PAGE, accounts.getAccount );

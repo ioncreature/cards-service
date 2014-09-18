@@ -1,0 +1,21 @@
+// @author Alexander Marenin
+// @date September 2014
+
+
+extends ../layout
+
+block content
+    #accounts.table-responsive
+        table.table.table-striped.table-hover
+            tr
+                th Login
+                th Roles
+            each account in accounts
+                - var url = formatUrl(route.ACCOUNT_PAGE, {login: account.login})
+                tr
+                    td
+                        a(href=url)= account.login
+                    td
+                        if account.role
+                            each role in account.role
+                                span.badge= role

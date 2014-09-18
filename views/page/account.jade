@@ -1,0 +1,15 @@
+// @author Alexander Marenin
+// @date September 2014
+
+
+extends ../layout
+
+block content
+    form(role='form', method='POST', action=postUrl, enctype='multipart/form-data')
+        .row
+            .col-md-3
+            .col-md-6
+                .form-group
+                    label(for='account-login') Login
+                    input#account-login.form-control(type='text', name='_id', value=account.login)
+                

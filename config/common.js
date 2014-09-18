@@ -7,6 +7,7 @@ exports.title = 'Cards Service';
 exports.processTitle = 'cards-service';
 exports.uploadsDir = require( 'path' ).join( __dirname, '..', 'uploads' );
 exports.backupDir = require( 'path' ).join( __dirname, '..', 'backup' );
+exports.cookieTtl = 6 * 3600 * 1000;
 
 exports.route = {
     PUBLIC: '/public',
@@ -22,6 +23,8 @@ exports.route = {
     NEW_ISSUER_PAGE: '/issuers/new',
     USERS_PAGE: '/users',
     USER_PAGE: '/users/:id',
+    ACCOUNTS_PAGE: '/accounts',
+    ACCOUNT_PAGE: '/accounts/:login',
     LOGIN: '/login',
     LOGOUT: '/logout',
 
@@ -43,5 +46,32 @@ exports.route = {
     ISSUER: '/issuer/:id'
 };
 
+exports.permissions = [
+    'get dashboard',
+    'get cards',
+    'get card',
+    'edit card',
+    'get issuers',
+    'get issuer',
+    'edit issuer',
+    'get users',
+    'get permissions',
+    'edit permissions'
+];
 
-exports.cookieTtl = 6 * 3600 * 1000;
+exports.acl = {
+    'admin': {can: exports.permissions},
+    'card moderator': {can: [
+        'get dashboard',
+        'get cards',
+        'get card',
+        'edit card',
+        'get issuers',
+    ]},
+    'issuer moderator': {can:[
+        'get dashboard',
+        'get issuers',
+        'get issuer',
+        'edit issuer'
+    ]}
+};

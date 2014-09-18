@@ -16,13 +16,16 @@ header#main-menu.navbar.navbar-default(role="banner", class=pageName)
             nav#main-nav.collapse.navbar-collapse(role='navigation')
                 ul.nav.navbar-nav.navbar-right
                     li(class=pageName === 'dashboard' ? 'active' : '' )
-                        a(href='/') Dashboard
-                    li(class=pageName === 'cards' ? 'active' : '' )
-                        a(href='/cards') Cards
+                        a(href=route.INDEX) Dashboard
+                    if role.can('get cards')
+                        li(class=pageName === 'cards' ? 'active' : '' )
+                            a(href=route.CARDS_PAGE) Cards
                     li(class=pageName === 'issuers' ? 'active' : '' )
-                        a(href='/issuers') Issuers
+                        a(href=route.ISSUERS_PAGE) Issuers
                     li(class=pageName === 'users' ? 'active' : '' )
-                        a(href='/users') Users
+                        a(href=route.USERS_PAGE) Users
+                    li(class=pageName === 'accounts' ? 'active' : '' )
+                        a(href=route.ACCOUNTS_PAGE) Accounts
                     li
-                        a(href='/logout') Logout
+                        a(href=route.LOGOUT) Logout
 

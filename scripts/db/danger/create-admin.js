@@ -13,7 +13,8 @@ db.connect( config.mongodb, {}, function( error ){
     else {
         db.Account.create({
             login: 'admin',
-            password: 'synqera'
+            password: 'synqera',
+            role: ['admin']
         }, function( error, account ){
             if ( error )
                 abort( error );
