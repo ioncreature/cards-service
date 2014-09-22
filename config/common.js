@@ -64,7 +64,7 @@ exports.acl = {
         'get dashboard',
         'get cards',
         'edit card',
-        'get issuers',
+        'get issuers'
     ]},
     'issuer moderator': {can:[
         'get dashboard',
