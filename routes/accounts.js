@@ -27,24 +27,41 @@ exports.getAccounts = function( req, res, next ){
 
 
 exports.getAccount = function( req, res, next ){
-    var login = req.params.login;
+    var login = req.params.login,
+        sessionLogin = req.session.user.login;
 
-    Account.findOne( {login: login}, function( error, account ){
-        if ( error )
-            next( error );
-        else if ( !account ){
-            var e = new Error( 'Account not found' );
-            e.status = 404;
-            next( e );
-        }
-        else
-            res.render( 'page/account', {
-                pageName: 'accounts',
-                pageTitle: 'Account info',
-                postUrl: util.formatUrl( route.ACCOUNT_PAGE, {login: account.login} ),
-                account: account
-            });
-    });
+    if ( login !== sessionLogin && !req.role.can('get accounts') ){
+        var e = new Error( 'Forbidden' );
+        e.status = 403;
+        next( e );
+    }
+    else
+        Account.findOne( {login: login}, function( error, account ){
+            if ( error )
+                next( error );
+            else if ( !account ){
+                var e = new Error( 'Account not found' );
+                e.status = 404;
+                next( e );
+            }
+            else
+                res.render( 'page/account', {
+                    pageName: 'accounts',
+                    pageTitle: 'Account info',
+                    postUrl: util.formatUrl( route.ACCOUNT_PAGE, {login: account.login} ),
+                    account: account
+                });
+        });
+};
+
+
+exports.getMe = function( req, res, next ){
+    var login = req.session.user && req.session.user.login;
+
+    if ( login )
+        res.redirect( util.formatUrl(route.ACCOUNT_PAGE, {login: login}) );
+    else
+        next( new Error('Session doesn\'t have user info') );
 };
 
 

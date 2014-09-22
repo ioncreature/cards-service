@@ -25,6 +25,7 @@ exports.route = {
     USER_PAGE: '/users/:id',
     ACCOUNTS_PAGE: '/accounts',
     ACCOUNT_PAGE: '/accounts/:login',
+    ACCOUNT_OWN_PAGE: '/me',
     LOGIN: '/login',
     LOGOUT: '/logout',
 
@@ -53,7 +54,7 @@ exports.permissions = [
     'get issuers',
     'edit issuer',
     'get users',
-    'get account',
+    'get accounts',
     'edit permissions',
     'get log'
 ];

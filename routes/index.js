@@ -125,22 +125,28 @@ router.get( route.INDEX, function( req, res, next ){
     });
 });
 
+
 router.get( route.CARDS_PAGE, role.can('get cards', forbid), cards.getCards );
 router.get( route.CARD_MODERATE, role.can('edit card', forbid), cards.moveToModerate );
 router.get( route.NEW_CARD_PAGE, role.can('edit card', forbid), cards.getNewCard );
 router.post( route.NEW_CARD_PAGE, role.can('edit card', forbid), cards.validateCard, cards.createCard );
 router.get( route.CARD_PAGE, role.can('get cards', forbid), cards.getCard );
 router.post( route.CARD_PAGE, role.can('edit card', forbid), cards.validateCard, cards.updateCard );
+
 router.get( route.USERS_PAGE, role.can('get users', forbid), users.getUsers );
 router.get( route.USER_PAGE, role.can('get users', forbid), users.getUser );
+
 router.get( route.ISSUERS_PAGE, role.can('get issuers', forbid), issuers.getIssuers );
 router.get( route.NEW_ISSUER_PAGE, role.can('edit issuer', forbid), issuers.getNewIssuer );
 router.post( route.NEW_ISSUER_PAGE, role.can('edit issuer', forbid), issuers.createNewIssuer );
 router.get( route.ISSUER_PAGE, role.can('get issuers', forbid), issuers.getIssuer );
 router.post( route.ISSUER_PAGE, role.can('edit issuer', forbid), issuers.updateIssuer );
-router.get( route.ACCOUNTS_PAGE, accounts.getAccounts );
+
+router.get( route.ACCOUNTS_PAGE, role.can('get accounts', forbid), accounts.getAccounts );
 router.get( route.ACCOUNT_PAGE, accounts.getAccount );
-router.post( route.ACCOUNT_PAGE, accounts.updateAccount );
+router.post( route.ACCOUNT_PAGE, role.can('edit permissions', forbid), accounts.updateAccount );
+router.get( route.ACCOUNT_OWN_PAGE, accounts.getMe );
+
 
 function forbid( req, res, next ){
     var e = new Error( 'Forbidden! You have not enough permissions' );

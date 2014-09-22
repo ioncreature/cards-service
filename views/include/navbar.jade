@@ -26,8 +26,11 @@ header#main-menu.navbar.navbar-default(role="banner", class=pageName)
                     if role.can('get users')
                         li(class=pageName === 'users' ? 'active' : '' )
                             a(href=route.USERS_PAGE) Users
-                    li(class=pageName === 'accounts' ? 'active' : '' )
-                        a(href=route.ACCOUNTS_PAGE) Accounts
+                    if role.can('get accounts')
+                        li(class=pageName === 'accounts' ? 'active' : '' )
+                            a(href=route.ACCOUNTS_PAGE) Accounts
+                    li(class=pageName === 'me' ? 'active' : '' )
+                        a(href=route.ACCOUNT_OWN_PAGE) Me
                     li
-                        a(href=route.LOGOUT) Logout
+                        a(href=route.LOGOUT) Exit
 
