@@ -44,3 +44,33 @@ exports.getAccount = function( req, res, next ){
             });
     });
 };
+
+
+exports.updateAccount = function( req, res, next ){
+    var id = req.params.id,
+        b = req.body;
+
+    if ( ObjectId.isValid(id) )
+        Account.findById( id, function( error, account ){
+            if ( error )
+                next( error );
+            else if ( !account ){
+                var e = new Error( 'Account not found' );
+                e.status = 404;
+                next( e );
+            }
+            else {
+                if ( b.password && b.confirmPassword && b.password === b.confirmPassword )
+                    account.password = b.password;
+                account.roles = b.roles || [];
+                account.save( function( error ){
+                    if ( error )
+                        next( error );
+                    else
+                        res.redirect( util.formatUrl(route.ACCOUNT_PAGE, {id: account._id}) );
+                });
+            }
+        });
+    else
+        next( new Error('Account id is invalid') );
+};

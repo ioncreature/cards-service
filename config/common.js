@@ -49,14 +49,13 @@ exports.route = {
 exports.permissions = [
     'get dashboard',
     'get cards',
-    'get card',
     'edit card',
     'get issuers',
-    'get issuer',
     'edit issuer',
     'get users',
-    'get permissions',
-    'edit permissions'
+    'get account',
+    'edit permissions',
+    'get log'
 ];
 
 exports.acl = {
@@ -64,14 +63,12 @@ exports.acl = {
     'card moderator': {can: [
         'get dashboard',
         'get cards',
-        'get card',
         'edit card',
         'get issuers',
     ]},
     'issuer moderator': {can:[
         'get dashboard',
         'get issuers',
-        'get issuer',
         'edit issuer'
     ]}
 };
