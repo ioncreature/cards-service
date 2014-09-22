@@ -10,6 +10,29 @@ block content
             .col-md-3
             .col-md-6
                 .form-group
-                    label(for='account-login') Login
-                    input#account-login.form-control(type='text', name='_id', value=account.login)
-                
+                    input(type='hidden', name='_id', value=account._id)
+                    .form-group
+                        label(for='account-login') Login
+                        input#account-login.form-control(type='text', name='login', value=account.login, readonly)
+                    .form-group
+                        label(for='account-password') Password
+                        input#account-password.form-control(type='password', name='password', value='')
+                    .form-group
+                        label(for='account-password-confirm') Password Confirmation
+                        input#account-password-confirm.form-control(type='password', name='passwordConfirm', value='')
+
+                    h3 Roles
+                    .checkbox
+                        label
+                            input(type='checkbox', name='role' value='admin', checked=account.role.indexOf('admin') > -1)
+                            | Admin
+                    .checkbox
+                        label
+                            input(type='checkbox', name='role' value='card moderator', checked=account.role.indexOf('card moderator') > -1)
+                            | Card moderator
+                    .checkbox
+                        label
+                            input(type='checkbox', name='role' value='issuer moderator', checked=account.role.indexOf('issuer moderator') > -1)
+                            | Issuer moderator
+                    .form-group
+                        button.btn.btn-success Update

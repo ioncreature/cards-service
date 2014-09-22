@@ -140,3 +140,4 @@ router.get( route.ISSUER_PAGE, issuers.getIssuer );
 router.post( route.ISSUER_PAGE, issuers.updateIssuer );
 router.get( route.ACCOUNTS_PAGE, accounts.getAccounts );
 router.get( route.ACCOUNT_PAGE, accounts.getAccount );
+router.post( route.ACCOUNT_PAGE, accounts.updateAccount );

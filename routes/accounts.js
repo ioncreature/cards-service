@@ -4,6 +4,7 @@
  */
 
 var registry = require( '../lib/registry' ),
+    util = require( '../lib/util' ),
     async = require( 'async' ),
     route = registry.get( 'config' ).route,
     db = registry.get( 'db' ),
@@ -32,7 +33,7 @@ exports.getAccount = function( req, res, next ){
         if ( error )
             next( error );
         else if ( !account ){
-            var e = new Error( 'User not found' );
+            var e = new Error( 'Account not found' );
             e.status = 404;
             next( e );
         }
@@ -40,6 +41,7 @@ exports.getAccount = function( req, res, next ){
             res.render( 'page/account', {
                 pageName: 'accounts',
                 pageTitle: 'Account info',
+                postUrl: util.formatUrl( route.ACCOUNT_PAGE, {login: account.login} ),
                 account: account
             });
     });
@@ -47,30 +49,27 @@ exports.getAccount = function( req, res, next ){
 
 
 exports.updateAccount = function( req, res, next ){
-    var id = req.params.id,
+    var login = req.params.login,
         b = req.body;
 
-    if ( ObjectId.isValid(id) )
-        Account.findById( id, function( error, account ){
-            if ( error )
-                next( error );
-            else if ( !account ){
-                var e = new Error( 'Account not found' );
-                e.status = 404;
-                next( e );
-            }
-            else {
-                if ( b.password && b.confirmPassword && b.password === b.confirmPassword )
-                    account.password = b.password;
-                account.roles = b.roles || [];
-                account.save( function( error ){
-                    if ( error )
-                        next( error );
-                    else
-                        res.redirect( util.formatUrl(route.ACCOUNT_PAGE, {id: account._id}) );
-                });
-            }
-        });
-    else
-        next( new Error('Account id is invalid') );
+    Account.findOne( {login: login}, function( error, account ){
+        if ( error )
+            next( error );
+        else if ( !account ){
+            var e = new Error( 'Account not found' );
+            e.status = 404;
+            next( e );
+        }
+        else {
+            if ( b.password && b.passwordConfirm && b.password === b.passwordConfirm )
+                account.password = b.password;
+            account.role = b.role || [];
+            account.save( function( error ){
+                if ( error )
+                    next( error );
+                else
+                    res.redirect( util.formatUrl(route.ACCOUNT_PAGE, {login: account.login}) );
+            });
+        }
+    });
 };
