@@ -1,0 +1,38 @@
+/**
+ * @author Alexander Marenin
+ * @date September 2014
+ */
+
+body.account {
+    .panel-account {
+        .colorize-panel( @color-light-green );
+    }
+
+    .panel-stats {
+        .colorize-panel( @color-light-blue2 );
+    }
+
+    .panel-activity {
+        .colorize-panel( @color-light-orange );
+    }
+
+    #edit-button {
+        float: right;
+        cursor: pointer;
+        &:hover span {
+            text-shadow: 0 0 5px;
+        }
+    }
+
+    #cancel-button {
+        margin-right: 15px;
+    }
+
+    span.glyphicon {
+        margin-right: 6px;
+    }
+
+    #panel-info-edit {
+        display: none;
+    }
+}

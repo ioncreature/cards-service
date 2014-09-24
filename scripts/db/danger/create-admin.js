@@ -14,7 +14,10 @@ db.connect( config.mongodb, {}, function( error ){
         db.Account.create({
             login: 'admin',
             password: 'synqera',
-            role: ['admin']
+            name: 'Sad Admin',
+            role: ['admin'],
+            phone: '1 555 123 4567',
+            email: 'synq.us.to'
         }, function( error, account ){
             if ( error )
                 abort( error );

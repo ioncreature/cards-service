@@ -18,7 +18,7 @@ exports.getAccounts = function( req, res, next ){
             next( error );
         else
             res.render( 'page/accounts', {
-                pageName: 'accounts',
+                pageName: 'account',
                 pageTitle: 'Accounts list',
                 accounts: list
             });
@@ -46,7 +46,7 @@ exports.getAccount = function( req, res, next ){
             }
             else
                 res.render( 'page/account', {
-                    pageName: 'accounts',
+                    pageName: 'account',
                     pageTitle: 'Account info',
                     postUrl: util.formatUrl( route.ACCOUNT_PAGE, {login: account.login} ),
                     account: account

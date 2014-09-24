@@ -38,25 +38,5 @@ body.dashboard {
     .panel-top-users {
         .colorize-panel( @color-light-berry-red );
     }
-
-    .colorize-panel( @color ){
-        border-color: darken(@color, 10%);
-        color: darken(@color, 60%);
-
-        & > .panel-heading {
-            font-family: 'Open Sans Condensed';
-            font-size: 1.4em;
-            color: darken(@color, 60%);
-            background-color: @color;
-            border-color: darken(@color, 10%);
-        }
-
-        .list-group-item {
-            border-color: darken(@color, 10%);
-            a {
-                color: inherit;
-            }
-        }
-    }
 }
 
