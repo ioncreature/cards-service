@@ -85,7 +85,9 @@ $( function(){
         newIssuerContainer.find( 'input' ).val( '' );
         issuerContainer.show();
         hideNewCardType.click();
-        cityInput.focus();
+        setTimeout( function(){
+            issuersSelect.trigger( 'chosen:activate' );
+        }, 50 );
     });
 
 
@@ -93,7 +95,6 @@ $( function(){
         cardTypeContainer.hide();
         newCardTypeContainer.show();
         newCardTypeContainer.find( 'input' ).focus();
-        console.log( newCardTypeInput.data('default') );
         newCardTypeInput.val( newCardTypeInput.data('default') );
     }).find( 'a' ).click( function( event ){
         event.preventDefault();
@@ -114,7 +115,7 @@ $( function(){
     });
 
 
-    cityInput.focus();
+    issuersSelect.trigger( 'chosen:activate' );
 
 
     $( 'body, input' ).on( 'keydown', function( e ){

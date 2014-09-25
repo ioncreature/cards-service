@@ -28,9 +28,6 @@ block content
         .row
             .col-md-4
                 h3 Information
-                .form-group
-                    label(for='card-city') City
-                    input#card-city.form-control(type='text', name='city', value=city)
                 #exisitng-issuer-container.form-group
                     label(for='issuer-id') Issuer
                     select.form-control(name='issuerId')
@@ -63,6 +60,9 @@ block content
                     label(for='new-issuer') New card type name
                     span#hide-new-card-type.glyphicon.glyphicon-remove
                     input#new-card-type.form-control(type='text', name='newCardType', data-default=defaultNewType || '')
+                .form-group
+                    label(for='card-city') City
+                    input#card-city.form-control(type='text', name='city', value=city)
                 if showNextButton
                     button#update-and-next.btn.btn-success(type='submit', disabled=!!locked) Update and next
 
