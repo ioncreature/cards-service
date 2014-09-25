@@ -18,7 +18,9 @@ var registry = require( '../lib/registry' ),
     File = db.File,
     CardType = db.CardType,
     Issuer = db.Issuer,
-    ObjectId = db.ObjectId;
+    ObjectId = db.ObjectId,
+    Account = db.Account,
+    Activity = db.Activity;
 
 
 exports.getCards = function( req, res, next ){
@@ -61,6 +63,7 @@ exports.getCards = function( req, res, next ){
 
 exports.getCard = function( req, res, next ){
     var id = req.params.id,
+        accountId = req.session.user._id,
         card;
 
     if ( ObjectId.isValid(id) ){
@@ -104,11 +107,11 @@ exports.getCard = function( req, res, next ){
                     haveFrontImg: card.imgFrontId,
                     haveBackImg: card.imgBackId,
                     showNextButton: true,
-                    locked: Date.now() - card.lastOpen < CARD_LOCK_TTL,
+                    locked: String(card.lastAccount) !== String(accountId) && (Date.now() - card.lastOpen < CARD_LOCK_TTL),
                     defaultNewType: 'Базовый',
                     submitCaption: 'Update'
                 });
-                Card.findByIdAndUpdate( id, {$set: {lastOpen: Date.now()}}, util.noop );
+                card.setLast( accountId, util.noop );
             }
         });
     }
@@ -252,6 +255,7 @@ exports.createCard = function( req, res, next ){
 
 exports.updateCard = function( req, res, next ){
     var id = req.params.id,
+        accountId = req.session.user._id,
         cardData = req.cardData,
         goNextCard = req.body.hasOwnProperty( 'next' );
 
@@ -264,9 +268,10 @@ exports.updateCard = function( req, res, next ){
                 next( new Error('Card not found') );
             else {
                 var prevIssuerId = card.issuerId,
+                    wasFull = card.isFull(),
                     queries = {
                         update: function( cb ){
-                            card.update( cardData, cb );
+                            card.update( {$set: cardData}, cb );
                         }
                     };
 
@@ -281,13 +286,34 @@ exports.updateCard = function( req, res, next ){
                         };
                 }
 
-                async.series( queries, function( error ){
+                queries.card = function( cb ){
+                    Card.findById( card._id, cb );
+                };
+
+                async.series( queries, function( error, result ){
                     if ( error )
                         next( error );
-                    else if ( goNextCard )
-                        res.redirect( route.CARD_MODERATE );
-                    else
-                        res.redirect( util.formatUrl(route.CARD_PAGE, {id: card._id}) );
+                    else {
+                        var c = result.card,
+                            moderate = !wasFull && c.isFull();
+
+                        if ( moderate )
+                            Account.addModeratedCard( accountId, util.noop );
+
+                        var activity = new Activity;
+                        activity.accountId = accountId;
+                        activity.entityId = card._id;
+                        activity.entityType = 'card';
+                        activity.action = 'update';
+                        activity.moderate = moderate;
+                        activity.diff = Activity.getDiff( card, c );
+                        activity.save( util.noop );
+
+                        if ( goNextCard )
+                            res.redirect( route.CARD_MODERATE );
+                        else
+                            res.redirect( util.formatUrl( route.CARD_PAGE, {id: card._id} ) );
+                    }
                 });
             }
         });

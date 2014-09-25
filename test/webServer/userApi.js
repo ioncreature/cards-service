@@ -86,6 +86,7 @@ describe( 'user API', function(){
             .post( route.API_PREFIX + route.CARDS )
             .field( 'userId', user._id )
             .attach( 'imgFront', imgPath )
+            .attach( 'imgBack', imgPath )
             .set( 'Cookie', registry.get('cookie') )
             .expect( 200 )
             .accept( 'json' )

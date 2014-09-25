@@ -4,7 +4,7 @@
  */
 
 body {
-    font-size: 15px;
+    font-size: @font-size-text;
     font-family: @font-family-common;
     color: @color-text;
     -webkit-text-stroke: 0.2px;
@@ -44,4 +44,18 @@ tr > th {
 th.short, td.short {
     width: 10%;
     min-width: 100px;
+}
+
+.panel {
+    .list-group-item {
+        overflow: hidden;
+    }
+    .value {
+        float: right;
+        font-weight: bold;
+    }
+}
+
+span.badge {
+    margin-right: 3px;
 }

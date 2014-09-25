@@ -18,13 +18,20 @@ block content
                     .panel-body#panel-info
                         p.text-muted
                             span.glyphicon.glyphicon-user
-                            span= account.name
+                            span= account.name || '-- no name --'
                         p.text-muted
                             span.glyphicon.glyphicon-earphone
-                            span= account.phone
+                            span= account.phone || '-- no phone --'
                         p.text-muted
                             span.glyphicon.glyphicon-envelope
-                            span= account.email
+                            span= account.email || '-- no email --'
+                        p.text-muted
+                            span.glyphicon.glyphicon-flash
+                            span
+                                each role in account.role
+                                    span.badge= role
+                                else
+                                    | -- no role --
                     .panel-body#panel-info-edit
                         .form-group
                             input(type='hidden', name='_id', value=account._id)
@@ -65,11 +72,21 @@ block content
             .col-md-4
                 .panel.panel-stats
                     .panel-heading Statistics
-                    .panel-body piu-piu
+                    ul.list-group
+                        li.list-group-item Moderated cards
+                            .value= account.moderatedCards
+                        li.list-group-item Moderated issuers
+                            .value= account.moderatedIssuers
+
             .col-md-4
                 .panel.panel-activity
                     .panel-heading Activity
                     ul.list-group
-                        li.list-group-item Bla
-                        li.list-group-item Bla Bla
-                        li.list-group-item Bla Bla Bla
+                        each activity in activities
+                            - var tpl = activity.entityType === 'card' ? route.CARD_PAGE : route.ISSUER_PAGE;
+                            - var url = formatUrl( tpl, {id: activity.entityId} );
+                            li.list-group-item #{activity.action} #{activity.entityType}
+                                .value
+                                    a(href=url)= activity.entityId
+                        else
+                            li.list-group-item.center -- no activity yet --
