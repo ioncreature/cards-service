@@ -80,30 +80,41 @@ exports.getMe = function( req, res, next ){
 
 
 exports.updateAccount = function( req, res, next ){
-    var login = req.params.login,
+    var role = req.role,
+        login = req.params.login,
+        sessionLogin = req.session.user.login,
         b = req.body;
 
-    Account.findOne( {login: login}, function( error, account ){
-        if ( error )
-            next( error );
-        else if ( !account ){
-            var e = new Error( 'Account not found' );
-            e.status = 404;
-            next( e );
-        }
-        else {
-            if ( b.password && b.passwordConfirm && b.password === b.passwordConfirm )
-                account.password = b.password;
-            account.role = b.role || [];
-            account.name = util.stripTags( b.name ) || '';
-            account.phone = util.stripTags( b.phone ) || '';
-            account.email = util.stripTags( b.email ) || '';
-            account.save( function( error ){
-                if ( error )
-                    next( error );
-                else
-                    res.redirect( util.formatUrl(route.ACCOUNT_PAGE, {login: account.login}) );
-            });
-        }
-    });
+    if ( login !== sessionLogin && !role.can('edit accounts') ){
+        var e = new Error( 'Forbidden' );
+        e.status = 403;
+        next( e );
+    }
+    else
+        Account.findOne( {login: login}, function( error, account ){
+            if ( error )
+                next( error );
+            else if ( !account ){
+                var e = new Error( 'Account not found' );
+                e.status = 404;
+                next( e );
+            }
+            else {
+                if ( b.password && b.passwordConfirm && b.password === b.passwordConfirm )
+                    account.password = b.password;
+                if ( role.can('edit permissions') )
+                    account.role = (b.role || []).map( function( item ){
+                        return util.stripTags( item );
+                    });
+                account.name = util.stripTags( b.name ) || '';
+                account.phone = util.stripTags( b.phone ) || '';
+                account.email = util.stripTags( b.email ) || '';
+                account.save( function( error ){
+                    if ( error )
+                        next( error );
+                    else
+                        res.redirect( util.formatUrl(route.ACCOUNT_PAGE, {login: account.login}) );
+                });
+            }
+        });
 };

@@ -144,7 +144,7 @@ router.post( route.ISSUER_PAGE, role.can('edit issuer', forbid), issuers.updateI
 
 router.get( route.ACCOUNTS_PAGE, role.can('get accounts', forbid), accounts.getAccounts );
 router.get( route.ACCOUNT_PAGE, accounts.getAccount );
-router.post( route.ACCOUNT_PAGE, role.can('edit permissions', forbid), accounts.updateAccount );
+router.post( route.ACCOUNT_PAGE, accounts.updateAccount );
 router.get( route.ACCOUNT_OWN_PAGE, accounts.getMe );
 
 

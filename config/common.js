@@ -55,6 +55,7 @@ exports.permissions = [
     'edit issuer',
     'get users',
     'get accounts',
+    'edit accounts',
     'edit permissions',
     'get log'
 ];
