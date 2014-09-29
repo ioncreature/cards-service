@@ -26,7 +26,8 @@ $( function(){
 
     var KEY_ESC = 27,
         KEY_ENTER = 13,
-        KEY_I = 73;
+        KEY_I = 73,
+        KEY_X = 88;
 
 
     $( '[rel=popover]' ).popover({
@@ -121,18 +122,6 @@ $( function(){
     issuersSelect.trigger( 'chosen:activate' );
 
 
-    $( 'body, input' ).on( 'keydown', function( e ){
-        if ( e.ctrlKey && e.keyCode === KEY_ENTER )
-            updateAndNext.click();
-
-        if ( e.ctrlKey && e.keyCode === KEY_I )
-            newIssuerHelp.click();
-
-        if ( e.keyCode === KEY_ESC )
-            hideNewIssuer.click();
-    });
-
-
     switchImagesButton.click( function(){
         var val = switchInput.val();
         switchInput.val( val ? '' : 'switch' );
@@ -140,5 +129,20 @@ $( function(){
         var parent = imgFront.parent();
         imgBack.parent().append( imgFront );
         parent.append( imgBack );
+    });
+
+
+    $( 'body, input' ).on( 'keydown', function( e ){
+        if ( e.ctrlKey && e.keyCode === KEY_ENTER )
+            updateAndNext.click();
+
+        if ( e.ctrlKey && e.keyCode === KEY_I )
+            newIssuerHelp.click();
+
+        if ( e.ctrlKey && e.keyCode === KEY_X )
+            switchImagesButton.click();
+
+        if ( e.keyCode === KEY_ESC )
+            hideNewIssuer.click();
     });
 });
