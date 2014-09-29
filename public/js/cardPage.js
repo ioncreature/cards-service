@@ -6,7 +6,6 @@
 $( function(){
     var issuersSelect = $( 'select[name=issuerId]' ),
         typesSelect = $( 'select[name=typeId]' ),
-        cityInput = $( 'input[name=city]' ),
         updateAndNext = $( '#update-and-next' ),
         newIssuerHelp = $( '#new-issuer-help' ),
         issuerContainer = $( '#exisitng-issuer-container' ),
@@ -19,7 +18,11 @@ $( function(){
         newCardTypeContainer = $( '#new-card-type-container' ),
         typePreviewFront = $( '#preview-front' ),
         typePreviewBack = $( '#preview-back' ),
-        typePreviewContainer = $( '#card-type-preview' );
+        typePreviewContainer = $( '#card-type-preview' ),
+        switchImagesButton = $( '#switch-images' ),
+        switchInput = $( 'input[name="switch"]' ),
+        imgFront = $( '#imgFront' ),
+        imgBack = $( '#imgBack' );
 
     var KEY_ESC = 27,
         KEY_ENTER = 13,
@@ -127,5 +130,15 @@ $( function(){
 
         if ( e.keyCode === KEY_ESC )
             hideNewIssuer.click();
+    });
+
+
+    switchImagesButton.click( function(){
+        var val = switchInput.val();
+        switchInput.val( val ? '' : 'switch' );
+
+        var parent = imgFront.parent();
+        imgBack.parent().append( imgFront );
+        parent.append( imgBack );
     });
 });

@@ -135,7 +135,7 @@ exports.getNewCard = function( req, res, next ){
         else
             res.render( 'page/card', {
                 pageName: 'cards',
-                pageTitle: 'Card',
+                pageTitle: 'New card',
                 id: '',
                 city: '',
                 issuers: issuers || [],
@@ -160,6 +160,7 @@ exports.validateCard = function( req, res, next ){
         typeId = req.body.typeId && filterString( req.body.typeId ),
         newTypeName = req.body.newCardType,
         queries = {},
+        role = req.role,
         error;
 
     if ( newIssuerName )
@@ -210,11 +211,13 @@ exports.validateCard = function( req, res, next ){
     if ( error )
         next( error );
     else {
-        if ( req.files.imgFront )
-            queries.imgFront = saveFile( req.files.imgFront, id );
-        if ( req.files.imgBack )
-            queries.imgBack = saveFile( req.files.imgBack, id );
-        delete req.files;
+        if ( role.can('upload card image') ){
+            if ( req.files.imgFront )
+                queries.imgFront = saveFile( req.files.imgFront, id );
+            if ( req.files.imgBack )
+                queries.imgBack = saveFile( req.files.imgBack, id );
+            delete req.files;
+        }
         req.cardData = cardData;
 
         if ( Object.keys(queries).length )
@@ -279,6 +282,11 @@ exports.updateCard = function( req, res, next ){
                     wasFull = card.isFull(),
                     queries = {
                         update: function( cb ){
+                            if ( req.body.switch === 'switch' ){
+                                cardData.imgBackId = card.imgFrontId;
+                                cardData.imgFrontId = card.imgBackId;
+                            }
+
                             card.update( {$set: cardData}, cb );
                         }
                     };

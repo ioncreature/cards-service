@@ -11,7 +11,10 @@ block scripts
 
 block header-buttons
     a#hotkeys-help.btn.btn-default(href='#', data-contentwrapper='#hotkeys', rel='popover') Show help
-    a#switch-cards.btn.btn-default(href='#') Switch cards
+    if showImages
+        a#switch-images.btn.btn-default(href='#')
+            span.glyphicon.glyphicon-retweet
+            | &nbsp; Switch images
 
 block content
     ul#hotkeys.list-group(style='display: none;')
@@ -24,6 +27,7 @@ block content
     if locked
         .alert.alert-danger This card is locked by other user
     form#card(role='form', method='POST', action=postUrl, enctype='multipart/form-data')
+        input(type='hidden', name='switch')
         .row
             .col-md-4
                 h3 Information
@@ -72,10 +76,11 @@ block content
                         if haveFrontImg
                             - var img1Url = formatUrl( route.API_PREFIX + route.CARD_IMAGE, {id: id, type: 'front'} );
                             a(href=img1Url, target='_blank')
-                                img.img-responsive.img-thumbnail(src=img1Url)
+                                img#imgFront.img-responsive.img-thumbnail(src=img1Url)
                         else
                             .alert.alert-warning.center(role='alert') No image
-                    input(type='file', name='imgFront')
+                    if role.can('upload card image')
+                        input(type='file', name='imgFront')
             .col-md-4
                 h3 Back image
                 .image-container
@@ -83,10 +88,11 @@ block content
                         if haveBackImg
                             - var img2Url = formatUrl( route.API_PREFIX + route.CARD_IMAGE, {id: id, type: 'back'} );
                             a(href=img2Url, target='_blank')
-                                img.img-responsive.img-thumbnail(src=img2Url)
+                                img#imgBack.img-responsive.img-thumbnail(src=img2Url)
                         else
                             .alert.alert-warning.center(role='alert') No image
-                    input(type='file', name='imgBack')
+                    if role.can('upload card image')
+                        input(type='file', name='imgBack')
 
         .row
             .col-md-12.center.offset-top

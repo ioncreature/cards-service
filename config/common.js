@@ -51,6 +51,7 @@ exports.permissions = [
     'get dashboard',
     'get cards',
     'edit card',
+    'upload card image',
     'get issuers',
     'edit issuer',
     'get users',
