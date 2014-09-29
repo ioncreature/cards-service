@@ -83,6 +83,14 @@ exports.getCard = function( req, res, next ){
                     CardType.find( {issuerId: card.issuerId}, cb );
                 else
                     cb();
+            },
+            todayCards: function( cb ){
+                Activity.count({
+                    accountId: accountId,
+                    _id: {$gt: getTodayObjectId()},
+                    action: 'update',
+                    moderate: true
+                }, cb );
             }
         }, function( error, result ){
             var cardTypes = result.cardTypes || [],
@@ -94,7 +102,7 @@ exports.getCard = function( req, res, next ){
             else {
                 res.render( 'page/card', {
                     pageName: 'cards',
-                    pageTitle: 'Card',
+                    pageTitle: 'Card (today done: ' + result.todayCards + ')',
                     id: id,
                     city: card.city || '',
                     issuerId: card.issuerId || '',
@@ -362,4 +370,15 @@ function saveFile( fileDesc, id ){
 
 function filterString( str ){
     return util.stripTags( str ).trim();
+}
+
+
+function getTodayObjectId(){
+    var d = new Date;
+    d.setHours( 0 );
+    d.setMinutes( 0 );
+    d.setSeconds( 0 );
+    d.setMilliseconds( 0 );
+
+    return ObjectId.createFromTime( Math.floor(d.getTime() / 1000) );
 }
