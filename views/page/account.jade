@@ -73,14 +73,20 @@ block content
                 .panel.panel-stats
                     .panel-heading Statistics
                     ul.list-group
-                        li.list-group-item Moderated cards
+                        li.list-group-item Total moderated cards
                             .value= account.moderatedCards
+                        li.list-group-item Today moderated cards
+                            .value= cardsToday
+                        li.list-group-item Last week moderated cards
+                            .value= cardsWeek
+                        li.list-group-item Last month moderated cards
+                            .value= cardsMonth
                         li.list-group-item Moderated issuers
                             .value= account.moderatedIssuers
 
             .col-md-4
                 .panel.panel-activity
-                    .panel-heading Activity
+                    .panel-heading Activity (#{activityCount})
                     ul.list-group
                         each activity in activities
                             - var tpl = activity.entityType === 'card' ? route.CARD_PAGE : route.ISSUER_PAGE;

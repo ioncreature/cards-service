@@ -49,22 +49,43 @@ exports.getAccount = function( req, res, next ){
                 next( e );
             }
             else
-                Activity
-                    .find( {accountId: account._id} )
-                    .limit( ACTIVITY_LOG_LENGTH )
-                    .sort( {_id: -1} )
-                    .exec( function( error, list ){
-                        if ( error )
-                            next( error );
-                        else
-                            res.render( 'page/account', {
-                                pageName: 'account',
-                                pageTitle: 'Account info',
-                                postUrl: util.formatUrl( route.ACCOUNT_PAGE, {login: account.login} ),
-                                account: account,
-                                activities: list
-                            });
-                    });
+                async.parallel({
+                    activity: function( cb ){
+                        Activity
+                            .find( {accountId: account._id} )
+                            .limit( ACTIVITY_LOG_LENGTH )
+                            .sort( {_id: -1} )
+                            .exec( cb );
+                    },
+                    activityCount: function( cb ){
+                        Activity.count( {accountId: account._id}, cb );
+                    },
+                    cardsToday: function( cb ){
+                        Activity.countTodayModeratedCards( account._id, cb );
+                    },
+                    cardsWeek: function( cb ){
+                        Activity.countWeekModeratedCards( account._id, cb );
+                    },
+                    cardsMonth: function( cb ){
+                        Activity.countMonthModeratedCards( account._id, cb );
+                    }
+                }, function( error, result ){
+                    if ( error )
+                        next( error );
+                    else {
+                        res.render( 'page/account', {
+                            pageName: 'account',
+                            pageTitle: 'Account info',
+                            postUrl: util.formatUrl( route.ACCOUNT_PAGE, {login: account.login} ),
+                            account: account,
+                            activities: result.activity,
+                            activityCount: result.activityCount,
+                            cardsToday: result.cardsToday,
+                            cardsWeek: result.cardsWeek,
+                            cardsMonth: result.cardsMonth
+                        });
+                    }
+                });
         });
 };
 

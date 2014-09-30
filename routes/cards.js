@@ -85,12 +85,7 @@ exports.getCard = function( req, res, next ){
                     cb();
             },
             todayCards: function( cb ){
-                Activity.count({
-                    accountId: accountId,
-                    _id: {$gt: getTodayObjectId()},
-                    action: 'update',
-                    moderate: true
-                }, cb );
+                Activity.countTodayModeratedCards( accountId, cb );
             }
         }, function( error, result ){
             var cardTypes = result.cardTypes || [],

@@ -9,12 +9,17 @@ block content
         table.table.table-striped.table-hover
             tr
                 th Login
+                th Name
+                th Phone
+                th Email
                 th Roles
             each account in accounts
                 - var url = formatUrl(route.ACCOUNT_PAGE, {login: account.login})
                 tr
-                    td
-                        a(href=url)= account.login
+                    td: a(href=url)= account.login
+                    td= account.name
+                    td= account.phone
+                    td= account.email
                     td
                         if account.role
                             each role in account.role
