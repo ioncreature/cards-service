@@ -3,7 +3,9 @@
  * @date July 2014
  */
 
-const ISSUERS_PER_PAGE = 50;
+const
+    ISSUERS_PER_PAGE = 50,
+    SEARCH_STRING_MAX_LENGTH = 20;
 
 var registry = require( '../lib/registry' ),
     route = registry.get( 'config' ).route,
@@ -11,20 +13,26 @@ var registry = require( '../lib/registry' ),
     db = registry.get( 'db' ),
     async = require( 'async' ),
     util = require( '../lib/util' ),
+    Card = db.Card,
     CardType = db.CardType,
     Issuer = db.Issuer,
     ObjectId = db.ObjectId;
 
 
 exports.getIssuers = function( req, res, next ){
-    var page = Number( req.query.page ) || 1;
+    var page = Number( req.query.page ) || 1,
+        search = req.query.search && req.query.search.trim().substr( 0, SEARCH_STRING_MAX_LENGTH ),
+        query = {};
+
+    if ( search )
+        query.name = new RegExp( search, 'i' );
 
     async.parallel({
         count: function( cb ){
-            Issuer.count( cb );
+            Issuer.count( query, cb );
         },
         issuers: function( cb ){
-            Issuer.find( {}, null, {
+            Issuer.find( query, null, {
                 limit: ISSUERS_PER_PAGE,
                 skip: ( page - 1 ) * ISSUERS_PER_PAGE,
                 sort: {cards: -1}
@@ -42,11 +50,12 @@ exports.getIssuers = function( req, res, next ){
 
             res.render( 'page/issuers', {
                 pageName: 'issuers',
-                pageTitle: 'Issuers list',
+                pageTitle: 'Issuers list (' + result.issuers.length + ' of ' + result.count + ')',
                 issuers: result.issuers,
                 currentPage: page,
                 totalPages: Math.ceil( result.count / ISSUERS_PER_PAGE ),
-                tplUrl: tplUrl
+                tplUrl: tplUrl,
+                search: search || ''
             });
         }
     });
@@ -175,6 +184,52 @@ exports.updateIssuer = function( req, res, next ){
     }
     else
         next( new Error('Incorrect Issuer ID ' + id) )
+};
+
+
+exports.getCardType = function( req, res, next ){
+    var id = req.params.id;
+
+    if ( ObjectId.isValid(id) ){
+        CardType.findById( id, function( error, type ){
+            if ( error )
+                next( error );
+            else if ( !type ){
+                var e = new Error( 'Card type not found' );
+                e.status = 404;
+                next( error );
+            }
+            else {
+                async.parallel({
+                    issuer: function( cb ){
+                        Issuer.findById( type.issuerId, cb );
+                    },
+                    cards: function( cb ){
+                        Card.find( {typeId: type._id}, cb );
+                    }
+                }, function( error, result ){
+                    if ( error )
+                        next( error );
+                    else if ( !result.issuer ){
+                        var e = new Error( 'Issuer of this type of card not found' );
+                        e.status = 404;
+                        next( e );
+                    }
+                    else {
+                        res.render( 'page/card-type', {
+                            pageName: 'issuers',
+                            pageTitle: 'Card type',
+                            type: type,
+                            issuer: result.issuer,
+                            cards: result.cards
+                        });
+                    }
+                });
+            }
+        });
+    }
+    else
+        next( new Error('Card type id is invalid') );
 };
 
 

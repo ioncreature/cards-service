@@ -5,6 +5,12 @@ extends ../layout
 include ../mixins
 
 block header-buttons
+    form#search-issuers
+        .input-group
+            input.form-control(type='text', name='search', value=search)
+            span.input-group-btn
+                button.btn.btn-default
+                    span.glyphicon.glyphicon-search
     a.btn.btn-default(href=route.NEW_ISSUER_PAGE) Add issuer
 
 block content

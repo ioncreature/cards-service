@@ -80,9 +80,12 @@
             float: left;
         }
 
-        button, a {
-            margin: 20px 0 10px 10px;
+        & > .header-controls {
             float: right;
+            & > * {
+                float: right;
+                margin: 20px 0 10px 10px;
+            }
         }
     }
 }

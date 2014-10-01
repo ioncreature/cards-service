@@ -141,6 +141,7 @@ router.get( route.NEW_ISSUER_PAGE, role.can('edit issuer', forbid), issuers.getN
 router.post( route.NEW_ISSUER_PAGE, role.can('edit issuer', forbid), issuers.createNewIssuer );
 router.get( route.ISSUER_PAGE, role.can('get issuers', forbid), issuers.getIssuer );
 router.post( route.ISSUER_PAGE, role.can('edit issuer', forbid), issuers.updateIssuer );
+router.post( route.CARD_TYPE_PAGE, role.can('edit issuer', forbid), issuers.getCardType );
 
 router.get( route.ACCOUNTS_PAGE, role.can('get accounts', forbid), accounts.getAccounts );
 router.get( route.ACCOUNT_PAGE, accounts.getAccount );

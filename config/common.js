@@ -20,6 +20,7 @@ exports.route = {
     CARD_MODERATE: '/cards/moderate',
     ISSUERS_PAGE: '/issuers',
     ISSUER_PAGE: '/issuers/:id',
+    CARD_TYPE_PAGE: '/card-type/:id',
     NEW_ISSUER_PAGE: '/issuers/new',
     USERS_PAGE: '/users',
     USER_PAGE: '/users/:id',
@@ -69,7 +70,7 @@ exports.acl = {
         'edit card',
         'get issuers'
     ]},
-    'issuer moderator': {can:[
+    'issuer moderator': {can: [
         'get dashboard',
         'get issuers',
         'edit issuer'

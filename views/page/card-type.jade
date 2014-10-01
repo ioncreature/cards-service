@@ -1,0 +1,17 @@
+// @author Alexander Marenin
+// @date September 2014
+
+extends ../layout
+
+block scripts
+    script(src='/public/js/cardTypePage.js')
+
+block content
+    form#card-type(role='form', method='POST', action=postUrl)
+        .form-group
+            label(for='type-name') Name
+            input#type-name(type='text', name='name', value=type.name)
+        .form-group
+            label(for='issuer-name') Issuer Name
+            input#issuer-name(type='text', name='name', value=issuer.name, readonly)
+
