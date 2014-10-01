@@ -2,6 +2,7 @@
 // @date July 2014
 
 extends ../layout
+include ../mixins
 
 block header-buttons
     a.btn.btn-default(href=route.NEW_ISSUER_PAGE) Add issuer
@@ -26,3 +27,6 @@ block content
                         a(href=issuer.url, target='_blank')= issuer.url
                     td= issuer.cards
 
+    if totalPages > 1
+        .center
+            +pagination(currentPage, totalPages, tplUrl)

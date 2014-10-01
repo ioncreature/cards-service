@@ -3,8 +3,11 @@
  * @date July 2014
  */
 
+const ISSUERS_PER_PAGE = 50;
+
 var registry = require( '../lib/registry' ),
     route = registry.get( 'config' ).route,
+    qs = require( 'qs' ),
     db = registry.get( 'db' ),
     async = require( 'async' ),
     util = require( '../lib/util' ),
@@ -14,15 +17,38 @@ var registry = require( '../lib/registry' ),
 
 
 exports.getIssuers = function( req, res, next ){
-    Issuer.find( {}, null, {sort: {cards: -1}}, function( error, issuers ){
+    var page = Number( req.query.page ) || 1;
+
+    async.parallel({
+        count: function( cb ){
+            Issuer.count( cb );
+        },
+        issuers: function( cb ){
+            Issuer.find( {}, null, {
+                limit: ISSUERS_PER_PAGE,
+                skip: ( page - 1 ) * ISSUERS_PER_PAGE,
+                sort: {cards: -1}
+            }, cb );
+        }
+    }, function( error, result ){
         if ( error )
             next( error );
-        else
+        else {
+            var tplQuery = util.mixin( {}, req.query ),
+                tplUrl;
+            delete tplQuery.page;
+            tplQuery = qs.stringify( tplQuery );
+            tplUrl = '?' + (tplQuery ? tplQuery + '&' : '') + 'page=:page';
+
             res.render( 'page/issuers', {
                 pageName: 'issuers',
                 pageTitle: 'Issuers list',
-                issuers: issuers
+                issuers: result.issuers,
+                currentPage: page,
+                totalPages: Math.ceil( result.count / ISSUERS_PER_PAGE ),
+                tplUrl: tplUrl
             });
+        }
     });
 };
 
