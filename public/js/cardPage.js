@@ -27,7 +27,8 @@ $( function(){
     var KEY_ESC = 27,
         KEY_ENTER = 13,
         KEY_I = 73,
-        KEY_X = 88;
+        KEY_X = 88,
+        KEY_Q = 81;
 
 
     $( '[rel=popover]' ).popover({
@@ -122,14 +123,7 @@ $( function(){
     issuersSelect.trigger( 'chosen:activate' );
 
 
-    switchImagesButton.click( function(){
-        var val = switchInput.val();
-        switchInput.val( val ? '' : 'switch' );
-
-        var parent = imgFront.parent();
-        imgBack.parent().append( imgFront );
-        parent.append( imgBack );
-    });
+    switchImagesButton.click( switchImages );
 
 
     $( 'body, input' ).on( 'keydown', function( e ){
@@ -139,10 +133,22 @@ $( function(){
         if ( e.ctrlKey && e.keyCode === KEY_I )
             newIssuerHelp.click();
 
-        if ( e.ctrlKey && e.keyCode === KEY_X )
-            switchImagesButton.click();
+        if ( e.ctrlKey && (e.keyCode === KEY_Q || e.keyCode === KEY_X) )
+            switchImages();
 
         if ( e.keyCode === KEY_ESC )
             hideNewIssuer.click();
     });
+
+    function switchImages(){
+        if ( Date.now() > switchImages.timer || !switchImages.timer ){
+            var val = switchInput.val();
+            switchInput.val( val ? '' : 'switch' );
+
+            var parent = imgFront.parent();
+            imgBack.parent().append( imgFront );
+            parent.append( imgBack );
+            switchImages.timer = Date.now() + 40;
+        }
+    }
 });
