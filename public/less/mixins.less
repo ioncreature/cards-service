@@ -16,9 +16,14 @@
     }
 
     .list-group-item {
+        overflow: hidden;
         border-color: darken(@color, 10%);
         a {
             color: inherit;
+        }
+        .value {
+            float: right;
+            font-weight: bold;
         }
     }
 }

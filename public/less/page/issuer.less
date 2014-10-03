@@ -5,11 +5,45 @@
 
 
 body.issuers {
-    button#addType {
+    button#add-type {
         float: right;
     }
 
     #search-issuers {
         width: 200px;
+    }
+
+    #card-types {
+        .card-type {
+            a {}
+            img {}
+            img {}
+        }
+    }
+
+    #card-type-preview {
+        overflow: hidden;
+        .card-preview {
+            float: left;
+            width: 49%;
+            &:first-child {
+                margin-right: 1.9%;
+            }
+
+            img {
+                width: 100%;
+                min-height: 20px;
+            }
+        }
+    }
+
+    #edit-button {
+        float: right;
+        cursor: pointer;
+        font-size: @font-size-text;
+        padding: 6px 0 5px 5px;
+        &:hover span {
+            text-shadow: 0 0 5px;
+        }
     }
 }

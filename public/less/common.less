@@ -47,15 +47,49 @@ th.short, td.short {
 }
 
 .panel {
-    .list-group-item {
-        overflow: hidden;
+    &.green {
+        .colorize-panel( @color-light-green );
     }
-    .value {
-        float: right;
-        font-weight: bold;
+    &.blue {
+        .colorize-panel( @color-light-blue );
+    }
+    &.blue2 {
+        .colorize-panel( @color-light-blue2 );
+    }
+    &.yellow {
+        .colorize-panel( @color-light-yellow );
+    }
+    &.orange {
+        .colorize-panel( @color-light-orange );
+    }
+    &.violet {
+        .colorize-panel( @color-light-violet );
+    }
+    &.purple {
+        .colorize-panel( @color-light-purple );
+    }
+    &.red {
+        .colorize-panel( @color-light-red );
+    }
+    &.berry-red {
+        .colorize-panel( @color-light-berry-red );
     }
 }
 
 span.badge {
     margin-right: 3px;
+}
+
+
+.value-block {
+    overflow: hidden;
+    margin: 10px 0;
+    .caption {
+        float: left;
+        margin-right: 10px;
+        font-weight: bold;
+    }
+    .value {
+        float: left;
+    }
 }

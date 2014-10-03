@@ -4,11 +4,13 @@
  */
 
 $( function(){
-    var form = $( 'form#issuer' ),
+    var MAX_TEXTAREA_HEIGHT = 200,
+        form = $( 'form#issuer' ),
         nameEl = $( 'input[name=name]' ),
         nameContainer = $( '#issuer-name-container' ),
-        cardTypesEl = $( '#cardTypes' ),
-        addCardTypeEl = $( '#addType' ),
+        cardTypesEl = $( '#card-types' ),
+        addCardTypeEl = $( '#add-type' ),
+        issuerAddress = $( '#issuer-address' ),
         index = 100;
 
     addCardType();
@@ -31,12 +33,16 @@ $( function(){
     });
 
 
+    issuerAddress.keyup( stretchTextArea );
+    stretchTextArea.call( issuerAddress[0] );
+
 
     function addCardType( focus ){
         var block = createCardTypeBlock( ++index );
         cardTypesEl.append( block );
         focus && block.find( 'input' ).focus();
     }
+
 
     function createCardTypeBlock( index ){
         var block = [
@@ -46,5 +52,16 @@ $( function(){
             "</div>",
         ].join( '' );
         return $( block );
+    }
+
+    function stretchTextArea(){
+        var e = $( this ),
+            scrollHeight = this.scrollHeight,
+            height = e.innerHeight();
+
+        console.log(height, scrollHeight);
+
+        if ( height < MAX_TEXTAREA_HEIGHT && scrollHeight > height )
+            e.height( scrollHeight );
     }
 });

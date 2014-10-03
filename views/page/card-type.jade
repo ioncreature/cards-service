@@ -7,11 +7,79 @@ block scripts
     script(src='/public/js/cardTypePage.js')
 
 block content
-    form#card-type(role='form', method='POST', action=postUrl)
-        .form-group
-            label(for='type-name') Name
-            input#type-name(type='text', name='name', value=type.name)
-        .form-group
-            label(for='issuer-name') Issuer Name
-            input#issuer-name(type='text', name='name', value=issuer.name, readonly)
+    .row
+        .col-md-4
+            .panel.violet
+                .panel-heading Info
+                    #edit-button
+                        span.glyphicon.glyphicon-pencil
+                .panel-body
+                    #type-info
+                        .value-block
+                            .caption Name
+                            .value= type.name
+                        .value-block
+                            .caption Issuer
+                            .value
+                                - var issuerUrl = formatUrl(route.ISSUER_PAGE, {id: issuer._id})
+                                a(href=issuerUrl)= issuer.name
+                        .value-block
+                            .caption Magnetic stripe
+                            .value= type.magneticStripe
+                        .value-block
+                            .caption Number
+                            .value= type.number ? 'yes' : 'no'
+                        if type.number
+                            .value-block
+                                .caption Number length
+                                .value= type.numberLength
+                        .value-block
+                            .caption User name
+                            .value= type.userName ? 'yes' : 'no'
+                        .value-block
+                            .caption Chip
+                            .value= type.chip ? 'yes' : 'no'
+                        .value-block
+                            .caption NFC
+                            .value= type.nfc ? 'yes' : 'no'
 
+
+                    form#card-type(role='form', method='POST', action=postUrl)
+                        .form-group
+                            label(for='type-name') Name
+                            input#type-name.form-control(type='text', name='name', value=type.name)
+                        .form-group
+                            label(for='issuer-name') Issuer Name
+                            input#issuer-name.form-control(type='text', name='name', value=issuer.name, readonly)
+                        .form-group
+                            label(for='magnetic-stripe') Magnetic stripe
+                            input#magnetic-stripe.form-control(type='checkbox', name='magneticStripe', value=type.magneticStripe)
+                        .form-group
+                            label(for='magnetic-stripe') Magnetic stripe
+                            input#magnetic-stripe.form-control(type='text', name='name', value=type.magneticStripe, readonly)
+        .col-md-4
+            .panel.blue
+                .panel-heading Preview
+                .panel-body
+                    if ( cards.length )
+                        #card-type-preview
+                            .card-preview
+                                - var frontUrl = formatUrl( route.API_PREFIX + route.CARD_TYPE_PREVIEW_FRONT, {id: type._id, type: 'front'} );
+                                a(href=frontUrl, target='_blank')
+                                    img#preview-front.img-responsive.img-rounded(src=frontUrl)
+                            .card-preview
+                                - var backUrl = formatUrl( route.API_PREFIX + route.CARD_TYPE_PREVIEW_FRONT, {id: type._id, type: 'back'} );
+                                a(href=backUrl, target='_blank')
+                                    img#preview-back.img-responsive.img-rounded(src=backUrl)
+                    else
+                        .center -- no card preview available --
+        .col-md-4
+            .panel.orange
+                .panel-heading Cards (#{cards.length} total)
+                ul.list-group
+                    each card in cards
+                        li.list-group-item
+                            - var url = formatUrl(route.CARD_PAGE, {id: card._id})
+                            a(href=url)= card._id
+                    else
+                        li.list-group-item.center -- no cards yet --

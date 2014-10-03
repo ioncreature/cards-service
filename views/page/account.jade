@@ -33,41 +33,40 @@ block content
                                 else
                                     | -- no role --
                     .panel-body#panel-info-edit
+                        input(type='hidden', name='_id', value=account._id)
                         .form-group
-                            input(type='hidden', name='_id', value=account._id)
-                            .form-group
-                                label(for='account-name') Name
-                                input#account-name.form-control(type='text', name='name', value=account.name)
-                            .form-group
-                                label(for='account-phone') Phone
-                                input#account-phone.form-control(type='text', name='phone', value=account.phone)
-                            .form-group
-                                label(for='account-email') Email
-                                input#account-email.form-control(type='text', name='email', value=account.email)
-                            .form-group
-                                label(for='account-password') Password
-                                input#account-password.form-control(type='password', name='password', value='')
-                            .form-group
-                                label(for='account-password-confirm') Password Confirmation
-                                input#account-password-confirm.form-control(type='password', name='passwordConfirm', value='')
-                            if role.can( 'edit permissions' )
-                                h3 Roles
-                                .checkbox
-                                    label
-                                        input(type='checkbox', name='role' value='admin', checked=account.role.indexOf('admin') > -1)
-                                        | Admin
-                                .checkbox
-                                    label
-                                        input(type='checkbox', name='role' value='card moderator', checked=account.role.indexOf('card moderator') > -1)
-                                        | Card moderator
-                                .checkbox
-                                    label
-                                        input(type='checkbox', name='role' value='issuer moderator', checked=account.role.indexOf('issuer moderator') > -1)
-                                        | Issuer moderator
-                                        .form-group
-                            .center
-                                button#cancel-button.btn.btn-danger Cancel
-                                button.btn.btn-success Update
+                            label(for='account-name') Name
+                            input#account-name.form-control(type='text', name='name', value=account.name)
+                        .form-group
+                            label(for='account-phone') Phone
+                            input#account-phone.form-control(type='text', name='phone', value=account.phone)
+                        .form-group
+                            label(for='account-email') Email
+                            input#account-email.form-control(type='text', name='email', value=account.email)
+                        .form-group
+                            label(for='account-password') Password
+                            input#account-password.form-control(type='password', name='password', value='')
+                        .form-group
+                            label(for='account-password-confirm') Password Confirmation
+                            input#account-password-confirm.form-control(type='password', name='passwordConfirm', value='')
+                        if role.can( 'edit permissions' )
+                            h3 Roles
+                            .checkbox
+                                label
+                                    input(type='checkbox', name='role' value='admin', checked=account.role.indexOf('admin') > -1)
+                                    | Admin
+                            .checkbox
+                                label
+                                    input(type='checkbox', name='role' value='card moderator', checked=account.role.indexOf('card moderator') > -1)
+                                    | Card moderator
+                            .checkbox
+                                label
+                                    input(type='checkbox', name='role' value='issuer moderator', checked=account.role.indexOf('issuer moderator') > -1)
+                                    | Issuer moderator
+                                    .form-group
+                        .center
+                            button#cancel-button.btn.btn-danger Cancel
+                            button.btn.btn-success Update
 
             .col-md-4
                 .panel.panel-stats
