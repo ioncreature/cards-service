@@ -15,6 +15,7 @@ var registry = require( '../lib/registry' ),
     util = require( '../lib/util' ),
     Card = db.Card,
     CardType = db.CardType,
+    Activity = db.Activity,
     Issuer = db.Issuer,
     ObjectId = db.ObjectId;
 
@@ -230,6 +231,58 @@ exports.getCardType = function( req, res, next ){
     }
     else
         next( new Error('Card type id is invalid') );
+};
+
+
+exports.updateCardType = function( req, res, next ){
+    var id = req.params.id,
+        accountId = req.session.user._id;
+
+    if ( ObjectId.isValid(id) ){
+        CardType.findById( id, function( error, type ){
+            if ( error )
+                next( error );
+            else if ( !type ){
+                var e = new Error( 'Card type not found' );
+                e.status = 404;
+                next( e );
+            }
+            else {
+                var prevData = type.toObject();
+                type.name = util.stripTags( req.body.name );
+                type.magneticStripe = req.body.magneticStripe === 'yes';
+                type.cardNumber = req.body.cardNumber === 'yes';
+                if ( type.cardNumber ){
+                    var numberLength = Number( req.body.cardNumberLength );
+                    type.cardNumberLength = isNaN( numberLength ) ? 0 : numberLength;
+                }
+                type.userName = req.body.userName === 'yes';
+                type.chip = req.body.chip === 'yes';
+                type.nfc = req.body.nfc === 'yes';
+
+                type.save( function( error ){
+                    if ( error )
+                        next( error );
+                    else {
+                        var activity = new Activity;
+                        activity.accountId = accountId;
+                        activity.entityId = type._id;
+                        activity.entityType = 'card type';
+                        activity.action = 'update';
+                        activity.moderate = false;
+                        activity.diff = Activity.getDiff( prevData, type );
+                        activity.save( util.noop );
+
+                        res.redirect( util.formatUrl(route.CARD_TYPE_PAGE, {id: type._id}) );
+                    }
+                })
+            }
+        });
+    }
+    else
+        next( new Error('Invalid card type id') );
+
+
 };
 
 

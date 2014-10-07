@@ -88,7 +88,15 @@ block content
                     .panel-heading Activity (#{activityCount})
                     ul.list-group
                         each activity in activities
-                            - var tpl = activity.entityType === 'card' ? route.CARD_PAGE : route.ISSUER_PAGE;
+                            - var tpl = route.CARD_PAGE;
+                            if activity.entityType === 'card'
+                                - tpl = route.CARD_PAGE;
+                            else if activity.entityType ===  'card type'
+                                - tpl = route.CARD_TYPE_PAGE;
+                            else if activity.entityType ===  'issuer'
+                                - tpl = route.ISSUER_PAGE;
+                            else if activity.entityType ===  'account'
+                                - tpl = route.ACCOUNT_PAGE;
                             - var url = formatUrl( tpl, {id: activity.entityId} );
                             li.list-group-item #{activity.action} #{activity.entityType}
                                 .value

@@ -25,14 +25,14 @@ block content
                                 a(href=issuerUrl)= issuer.name
                         .value-block
                             .caption Magnetic stripe
-                            .value= type.magneticStripe
+                            .value= type.magneticStripe ? 'yes' : 'no'
                         .value-block
-                            .caption Number
-                            .value= type.number ? 'yes' : 'no'
-                        if type.number
+                            .caption Card number
+                            .value= type.cardNumber ? 'yes' : 'no'
+                        if type.cardNumber
                             .value-block
-                                .caption Number length
-                                .value= type.numberLength
+                                .caption Card number length
+                                .value= type.cardNumberLength
                         .value-block
                             .caption User name
                             .value= type.userName ? 'yes' : 'no'
@@ -44,33 +44,46 @@ block content
                             .value= type.nfc ? 'yes' : 'no'
 
 
-                    form#card-type(role='form', method='POST', action=postUrl)
+                    form#type-form(role='form', method='POST', action=postUrl)
                         .form-group
                             label(for='type-name') Name
                             input#type-name.form-control(type='text', name='name', value=type.name)
-                        .form-group
-                            label(for='issuer-name') Issuer Name
-                            input#issuer-name.form-control(type='text', name='name', value=issuer.name, readonly)
-                        .form-group
-                            label(for='magnetic-stripe') Magnetic stripe
-                            input#magnetic-stripe.form-control(type='checkbox', name='magneticStripe', value=type.magneticStripe)
-                        .form-group
-                            label(for='magnetic-stripe') Magnetic stripe
-                            input#magnetic-stripe.form-control(type='text', name='name', value=type.magneticStripe, readonly)
+                        .checkbox
+                            label
+                                input(type='checkbox', name='magneticStripe', value='yes', checked=type.magneticStripe)
+                                | Magnetic stripe
+                        .checkbox
+                            label
+                                input(type='checkbox', name='cardNumber', value='yes', checked=type.cardNumber)
+                                | Card Number
+                            #card-number-length-container.form-group(style="display: " + (type.cardNumber ? 'block;' : 'none;'))
+                                input.form-control(type='number', name='cardNumberLength', value=type.cardNumberLength || 0)
+                        .checkbox
+                            label
+                                input(type='checkbox', name='userName', value='yes', checked=type.userName)
+                                | User name
+                        .checkbox
+                            label
+                                input(type='checkbox', name='chip', value='yes', checked=type.chip)
+                                | Chip
+                        .checkbox
+                            label
+                                input(type='checkbox', name='nfc', value='yes', checked=type.nfc)
+                                | NFC
+                        .center
+                            button#cancel-button.btn.btn-danger Cancel
+                            button.btn.btn-success Update
         .col-md-4
             .panel.blue
                 .panel-heading Preview
                 .panel-body
                     if ( cards.length )
-                        #card-type-preview
-                            .card-preview
-                                - var frontUrl = formatUrl( route.API_PREFIX + route.CARD_TYPE_PREVIEW_FRONT, {id: type._id, type: 'front'} );
-                                a(href=frontUrl, target='_blank')
-                                    img#preview-front.img-responsive.img-rounded(src=frontUrl)
-                            .card-preview
-                                - var backUrl = formatUrl( route.API_PREFIX + route.CARD_TYPE_PREVIEW_FRONT, {id: type._id, type: 'back'} );
-                                a(href=backUrl, target='_blank')
-                                    img#preview-back.img-responsive.img-rounded(src=backUrl)
+                        - var frontUrl = formatUrl( route.API_PREFIX + route.CARD_TYPE_PREVIEW_FRONT, {id: type._id, type: 'front'} );
+                        a.card-preview(href=frontUrl, target='_blank')
+                            img#preview-front.img-responsive.img-rounded(src=frontUrl)
+                        - var backUrl = formatUrl( route.API_PREFIX + route.CARD_TYPE_PREVIEW_FRONT, {id: type._id, type: 'back'} );
+                        a.card-preview(href=backUrl, target='_blank')
+                            img#preview-back.img-responsive.img-rounded(src=backUrl)
                     else
                         .center -- no card preview available --
         .col-md-4
