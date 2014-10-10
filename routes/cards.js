@@ -162,8 +162,10 @@ exports.validateCard = function( req, res, next ){
     if ( newIssuerName )
         queries.issuer = function( cb ){
             Issuer.create( {name: util.stripTags(newIssuerName)}, function( error, issuer ){
-                if ( !error )
+                if ( !error ){
                     cardData.issuerId = issuer._id;
+                    Activity.createByAccount( accountId, issuer, {action: Activity.CREATE} );
+                }
                 cb( error, issuer );
             });
         };
@@ -175,7 +177,7 @@ exports.validateCard = function( req, res, next ){
             };
         }
         else
-            error = new Error( 'Invalid issuer ID "' + util.stripTags(issuerId) + '"' );
+            error = new Error( 'Invalid issuer ID' );
     }
 
     if ( newTypeName ){
@@ -187,8 +189,10 @@ exports.validateCard = function( req, res, next ){
                     name: util.stripTags( newTypeName ),
                     issuerId: cardData.issuerId
                 }, function( error, cardType ){
-                    if ( !error )
+                    if ( !error ){
                         cardData.typeId = cardType._id;
+                        Activity.createByAccount( accountId, cardType, {action: Activity.CREATE} );
+                    }
                     cb( error, cardType );
                 });
         };
@@ -221,14 +225,10 @@ exports.validateCard = function( req, res, next ){
                 if ( error )
                     next( error );
                 else {
-                    if ( result.issuer ){
+                    if ( result.issuer )
                         cardData.issuerName = result.issuer.name;
-                        Activity.createByAccount( accountId, result.issuer, {action: Activity.CREATE} );
-                    }
-                    if ( result.cardType ){
+                    if ( result.cardType )
                         cardData.typeName = result.cardType.name;
-                        Activity.createByAccount( accountId, result.cardType, {action: Activity.CREATE} );
-                    }
                     if ( result.imgFront )
                         cardData.imgFrontId = result.imgFront[0]._id;
                     if ( result.imgBack )
