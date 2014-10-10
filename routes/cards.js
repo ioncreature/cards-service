@@ -365,14 +365,3 @@ function saveFile( fileDesc, id ){
 function filterString( str ){
     return util.stripTags( str ).trim();
 }
-
-
-function getTodayObjectId(){
-    var d = new Date;
-    d.setHours( 0 );
-    d.setMinutes( 0 );
-    d.setSeconds( 0 );
-    d.setMilliseconds( 0 );
-
-    return ObjectId.createFromTime( Math.floor(d.getTime() / 1000) );
-}
