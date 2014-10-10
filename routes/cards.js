@@ -156,6 +156,7 @@ exports.validateCard = function( req, res, next ){
         newTypeName = req.body.newCardType,
         queries = {},
         role = req.role,
+        accountId = req.session.user._id,
         error;
 
     if ( newIssuerName )
@@ -220,10 +221,14 @@ exports.validateCard = function( req, res, next ){
                 if ( error )
                     next( error );
                 else {
-                    if ( result.issuer )
+                    if ( result.issuer ){
                         cardData.issuerName = result.issuer.name;
-                    if ( result.cardType )
+                        Activity.createByAccount( accountId, result.issuer, {action: Activity.CREATE} );
+                    }
+                    if ( result.cardType ){
                         cardData.typeName = result.cardType.name;
+                        Activity.createByAccount( accountId, result.cardType, {action: Activity.CREATE} );
+                    }
                     if ( result.imgFront )
                         cardData.imgFrontId = result.imgFront[0]._id;
                     if ( result.imgBack )
@@ -281,8 +286,8 @@ exports.updateCard = function( req, res, next ){
                                 cardData.imgBackId = card.imgFrontId;
                                 cardData.imgFrontId = card.imgBackId;
                             }
-
-                            card.update( {$set: cardData}, cb );
+                            util.mixin( card, cardData );
+                            card.save( cb );
                         }
                     };
 
@@ -297,28 +302,14 @@ exports.updateCard = function( req, res, next ){
                         };
                 }
 
-                queries.card = function( cb ){
-                    Card.findById( card._id, cb );
-                };
-
-                async.series( queries, function( error, result ){
+                async.series( queries, function( error ){
                     if ( error )
                         next( error );
                     else {
-                        var c = result.card,
-                            moderate = !wasFull && c.isFull();
+                        var moderate = !wasFull && card.isFull();
 
-                        if ( moderate )
-                            Account.addModeratedCard( accountId, util.noop );
-
-                        var activity = new Activity;
-                        activity.accountId = accountId;
-                        activity.entityId = card._id;
-                        activity.entityType = 'card';
-                        activity.action = 'update';
-                        activity.moderate = moderate;
-                        activity.diff = Activity.getDiff( card, c );
-                        activity.save( util.noop );
+                        moderate && Account.addModeratedCard( accountId );
+                        Activity.createByAccount( accountId, card, {moderate: moderate} );
 
                         if ( goNextCard )
                             res.redirect( route.CARD_MODERATE );

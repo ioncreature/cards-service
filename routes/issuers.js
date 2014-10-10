@@ -149,6 +149,7 @@ exports.getIssuer = function( req, res, next ){
 
 exports.updateIssuer = function( req, res, next ){
     var id = req.params.id,
+        accountId = req.session.user._id,
         issuerData = {
             name: filterString( req.body.name ),
             description: filterString( req.body.description ),
@@ -156,9 +157,16 @@ exports.updateIssuer = function( req, res, next ){
             phone: filterString( req.body.phone ),
             address: filterString( req.body.address )
         },
-        cardTypes = (req.body.cardType || []).filter( function( cardType ){
-            return cardType.name && !cardType._id;
-        });
+        cardTypes = (req.body.cardType || [])
+            .filter( function( cardType ){
+                return cardType.name && !cardType._id;
+            })
+            .map( function( type ){
+                return {
+                    name: type.name,
+                    issuerId: id
+                };
+            });
 
     if ( ObjectId.isValid(id) ){
         id = new ObjectId( id );
@@ -168,17 +176,14 @@ exports.updateIssuer = function( req, res, next ){
             else if ( !issuer )
                 next( new Error('Issuer with ID ' + id + ' not found') );
             else {
-                var types = cardTypes.map( function( type ){
-                    return {
-                        name: type.name,
-                        issuerId: id
-                    };
-                });
-                CardType.create( types, function( error ){
+                CardType.create( cardTypes, function( error ){
                     if ( error )
                         next( error );
-                    else
+                    else {
+                        var newTypes = Array.prototype.splice.call( arguments, 1 );
+                        Activity.createByAccount( accountId, newTypes, {action: Activity.CREATE} );
                         res.redirect( util.formatUrl(route.ISSUER_PAGE, {id: id}) );
+                    }
                 });
             }
         });
