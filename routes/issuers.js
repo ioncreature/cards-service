@@ -170,22 +170,30 @@ exports.updateIssuer = function( req, res, next ){
 
     if ( ObjectId.isValid(id) ){
         id = new ObjectId( id );
-        Issuer.findByIdAndUpdate( id, issuerData, function( error, issuer ){
+        Issuer.findById( id, function( error, issuer ){
             if ( error )
                 next( error );
             else if ( !issuer )
-                next( new Error('Issuer with ID ' + id + ' not found') );
-            else {
-                CardType.create( cardTypes, function( error ){
+                next( new Error('Issuer not found') );
+            else
+                async.series({
+                    update: function( cb ){
+                        util.mixin( issuer, issuerData );
+                        issuer.save( cb );
+                    },
+                    cardTypes: function( cb ){
+                        CardType.create( cardTypes, cb );
+                    }
+                }, function( error, result ){
                     if ( error )
                         next( error );
                     else {
-                        var newTypes = Array.prototype.splice.call( arguments, 1 );
-                        Activity.createByAccount( accountId, newTypes, {action: Activity.CREATE} );
+                        Activity.createByAccount( accountId, issuer );
+                        if ( result.cardTypes )
+                            Activity.createByAccount( accountId, result.cardTypes, {action: Activity.CREATE} );
                         res.redirect( util.formatUrl(route.ISSUER_PAGE, {id: id}) );
                     }
                 });
-            }
         });
     }
     else
