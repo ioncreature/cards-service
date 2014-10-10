@@ -7,7 +7,6 @@ extends ../layout
 block content
     form(role='form', method='POST', action=postUrl, enctype='multipart/form-data')
         .row
-            .col-md-3
             .col-md-6
                 .form-group
                     label(for='user-id') ID
@@ -21,3 +20,13 @@ block content
                 .form-group
                     label(for='user-external-id') External ID
                     input#user-external-id.form-control(type='text', name='externalId', value=user.externalId, readonly)
+            .col-md-6
+                .panel.orange
+                    .panel-heading Cards (#{cards.length} total)
+                    ul.list-group
+                        each card in cards
+                            li.list-group-item
+                                - var url = formatUrl(route.CARD_PAGE, {id: card._id})
+                                a(href=url)= card._id
+                        else
+                            li.list-group-item.center -- no cards yet --

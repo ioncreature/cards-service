@@ -9,6 +9,7 @@ var registry = require( '../lib/registry' ),
     util = require( '../lib/util' ),
     db = registry.get( 'db' ),
     User = db.User,
+    Card = db.Card,
     ObjectId = db.ObjectId;
 
 
@@ -35,11 +36,17 @@ exports.getUser = function( req, res ){
             else if ( !user )
                 next( new Error('User with ID "' + util.stripTags(id) + '" not found') );
             else
-                res.render( 'page/user', {
-                    pageName: 'users',
-                    pageTitle: 'User',
-                    postUrl: '#',
-                    user: user
+                Card.find( {userId: user._id}, function( error, cards ){
+                    if ( error )
+                        next( error );
+                    else
+                        res.render( 'page/user', {
+                            pageName: 'users',
+                            pageTitle: 'User',
+                            postUrl: '#',
+                            user: user,
+                            cards: cards
+                        });
                 });
         });
     else
