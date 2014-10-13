@@ -35,6 +35,27 @@ exports.getCards = function( req, res, next ){
 };
 
 
+exports.getCard = function( req, res, next ){
+    var id = req.params.id;
+
+    if ( ObjectId.isValid(id) ){
+        Card.findById( id, function( error, card ){
+            if ( error )
+                next( error );
+            else if ( !card ){
+                var e = new Error( 'Card not found' );
+                e.status = 404;
+                next( e );
+            }
+            else
+                res.json( card );
+        });
+    }
+    else
+        next( new Error('Card id is invalid') );
+};
+
+
 exports.createCard = function( req, res, next ){
     var b = req.body,
         userId = b.userId,

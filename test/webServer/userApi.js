@@ -103,6 +103,25 @@ describe( 'user API', function(){
     });
 
 
+    it( 'should return card by its id', function( done ){
+        request( app )
+            .get( util.formatUrl(route.API_PREFIX + route.CARD, {id: card._id}) )
+            .set( 'Cookie', registry.get('cookie') )
+            .accept( 'json' )
+            .expect( 200 )
+            .end( function( error, res ){
+                if ( error )
+                    done( error );
+                else {
+                    var c = res.body;
+                    expect( c.imgFrontId ).to.be.ok;
+                    expect( c.imgBackId ).to.be.ok;
+                    expect( c.userId ).to.equal( user._id );
+                    done();
+                }
+            });
+    });
+
     it( 'should return previously uploaded image', function( done ){
         request( app )
             .get( util.formatUrl(route.API_PREFIX + route.CARD_IMAGE, {id: card._id, type: 'front'}) )
