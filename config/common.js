@@ -45,7 +45,8 @@ exports.route = {
     CARD_TYPE: '/card-type/:id',
     CARD_TYPE_PREVIEW_FRONT: '/card-type/:id/img/:type',
     ISSUERS: '/issuer',
-    ISSUER: '/issuer/:id'
+    ISSUER: '/issuer/:id',
+    ISSUER_IMAGE: '/issuer/:id/preview'
 };
 
 exports.permissions = [

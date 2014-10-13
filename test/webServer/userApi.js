@@ -11,7 +11,7 @@ var expect = require( 'chai' ).expect,
     route = registry.get( 'config' ).route,
     request = require( 'supertest' );
 
-describe( 'user API', function(){
+describe( 'User API', function(){
     var user,
         card;
 

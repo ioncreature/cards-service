@@ -18,6 +18,7 @@ var router = require( 'express' ).Router(),
     Card = db.Card,
     ObjectId = db.ObjectId,
     userApi = require( './api/user' ),
+    issuerApi = require( './api/issuer' ),
     cardApi = require( './api/card' );
 
 module.exports = router;
@@ -39,6 +40,9 @@ router.post( route.CARDS, cardApi.createCard );
 router.get( route.CARD_IMAGE, cardApi.getPhoto );
 router.get( route.CARD, cardApi.getCard );
 router.get( route.FILE, cardApi.getFile );
+router.get( route.ISSUER, issuerApi.getIssuer );
+router.get( route.ISSUERS, issuerApi.getIssuers );
+router.get( route.ISSUER_IMAGE, issuerApi.getIssuerImage );
 
 
 router.use( role.isAuthorized( function( req, res, next ){

@@ -4,7 +4,6 @@
  */
 
 var util = require( '../lib/util' ),
-    request = require( 'supertest' ),
     registry = require( '../lib/registry' ),
     config = util.getConfig( 'test' ),
     db = require( '../lib/db' );
@@ -25,4 +24,5 @@ describe( 'web server', function(){
 
     require( './webServer/pages' );
     require( './webServer/userApi' );
+    require( './webServer/issuerApi' );
 });
