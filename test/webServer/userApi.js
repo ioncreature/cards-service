@@ -125,7 +125,6 @@ describe( 'User API', function(){
     it( 'should return previously uploaded image', function( done ){
         request( app )
             .get( util.formatUrl(route.API_PREFIX + route.CARD_IMAGE, {id: card._id, type: 'front'}) )
-            .query( {userId: user._id} )
             .set( 'Cookie', registry.get('cookie') )
             .accept( 'image/jpeg' )
             .expect( 200 )

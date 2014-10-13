@@ -47,10 +47,45 @@ describe( 'Issuer API', function(){
                     done( error );
                 else {
                     var iss = res.body;
-                    expect( iss ).to.deep.equal( issuer );
+                    expect( iss.name ).to.equal( issuer.name );
+                    expect( iss._id ).to.equal( issuer._id );
+                    expect( iss.cardTypes ).to.be.instanceof( Array );
                     done();
                 }
             });
+    });
+
+
+    it( 'should return issuer card types list', function( done ){
+        request( app )
+            .get( route.API_PREFIX + util.formatUrl(route.ISSUER_CARD_TYPES, {id: issuer._id}) )
+            .set( 'Cookie', registry.get('cookie') )
+            .expect( 200 )
+            .accept( 'json' )
+            .end( function( error, res ){
+                if ( error )
+                    done( error );
+                else {
+                    var types = res.body;
+                    expect( types ).to.be.instanceof( Array );
+
+                    types.forEach( function( item ){
+                        expect( item ).to.contain.keys( '_id', 'name', 'issuerId' );
+                        expect( item.issuerId ).to.equal( issuer._id );
+                    });
+                    done();
+                }
+            });
+    });
+
+
+    it( 'should return issuer preview image', function( done ){
+        request( app )
+            .get( util.formatUrl(route.API_PREFIX + route.ISSUER_IMAGE, {id: issuer._id}) )
+            .set( 'Cookie', registry.get('cookie') )
+            .accept( 'image/jpeg' )
+            .expect( 200 )
+            .end( done );
     });
 
 

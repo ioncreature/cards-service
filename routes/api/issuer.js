@@ -10,9 +10,13 @@ const
 var registry = require( '../../lib/registry' ),
     async = require( 'async' ),
     util = require( '../../lib/util' ),
+    mime = require( 'mime' ),
     route = registry.get( 'config' ).route,
     db = registry.get( 'db' ),
     Issuer = db.Issuer,
+    CardType = db.CardType,
+    Card = db.Card,
+    File = db.File,
     ObjectId = db.ObjectId;
 
 
@@ -39,7 +43,15 @@ exports.getIssuer = function( req, res, next ){
     var id = req.params.id;
 
     if ( ObjectId.isValid(id) )
-        Issuer.findById( id, function( error, issuer ){
+        async.parallel({
+            issuer: function( cb ){
+                Issuer.findById( id, cb );
+            },
+            types: function( cb ){
+                CardType.find( {issuerId: id}, cb );
+            }
+        }, function( error, result ){
+            var issuer = result.issuer;
             if ( error )
                 next( error );
             else if ( !issuer ){
@@ -47,8 +59,11 @@ exports.getIssuer = function( req, res, next ){
                 e.status = 404;
                 next( e );
             }
-            else
-                res.json( issuer );
+            else {
+                var iss = issuer.toObject();
+                iss.cardTypes = result.types || [];
+                res.json( iss );
+            }
         });
     else
         next( new Error('Invalid issuer id') );
@@ -56,5 +71,48 @@ exports.getIssuer = function( req, res, next ){
 
 
 exports.getIssuerImage = function( req, res, next ){
-    res.json( 'ok' );
+    var id = req.params.id;
+
+    if ( ObjectId.isValid(id) )
+        Card.findOne( {issuerId: id}, function( error, card ){
+            if ( error )
+                next( error );
+            else if ( !card || !card.imgFrontId ){
+                var e = new Error( 'Not found' );
+                e.status = 404;
+                next( e );
+            }
+            else
+                File.findById( card.imgFrontId, function( error, file ){
+                    if ( error )
+                        next( error );
+                    if ( !file ){
+                        e = new Error( 'Not found' );
+                        e.status = 404;
+                        next( e );
+                    }
+                    else {
+                        res.type( file.mimeType || mime.lookup(file.name) );
+                        res.set( 'Content-Disposition', 'filename="' + file.name + '"' );
+                        res.send( file.data );
+                    }
+                });
+        });
+    else
+        next( new Error('Invalid issuer id') );
+};
+
+
+exports.getIssuerCardTypes = function( req, res, next ){
+    var id = req.params.id;
+
+    if ( ObjectId.isValid(id) )
+        CardType.find( {issuerId: id}, function( error, list ){
+            if ( error )
+                next( error );
+            else
+                res.json( list || [] );
+        });
+    else
+        next( new Error('Invalid issuer id') );
 };

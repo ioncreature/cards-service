@@ -43,6 +43,7 @@ router.get( route.FILE, cardApi.getFile );
 router.get( route.ISSUER, issuerApi.getIssuer );
 router.get( route.ISSUERS, issuerApi.getIssuers );
 router.get( route.ISSUER_IMAGE, issuerApi.getIssuerImage );
+router.get( route.ISSUER_CARD_TYPES, issuerApi.getIssuerCardTypes );
 
 
 router.use( role.isAuthorized( function( req, res, next ){
