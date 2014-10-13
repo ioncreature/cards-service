@@ -46,7 +46,7 @@ exports.route = {
     CARD_TYPE_PREVIEW_FRONT: '/card-type/:id/img/:type',
     ISSUERS: '/issuer',
     ISSUER: '/issuer/:id',
-    ISSUER_CARD_TYPES: '/issuer/:id/types',
+    ISSUER_CARD_TYPES: '/issuer/:id/card-types',
     ISSUER_IMAGE: '/issuer/:id/preview'
 };
 
