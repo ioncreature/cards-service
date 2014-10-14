@@ -73,6 +73,8 @@ exports.createCard = function( req, res, next ){
                 next( error || new Error('User not found') );
             else {
                 cardData.userId = user._id;
+                cardData.description = b.description || '';
+
                 if ( b.city )
                     cardData.city = util.stripTags( b.city );
                 if ( b.issuerId && ObjectId.isValid(b.issuerId) )
