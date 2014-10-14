@@ -4,7 +4,7 @@
  */
 
 const
-    ISSUERS_LIMIT = 50,
+    DAY = 24 * 3600 * 1000,
     SEARCH_STRING_MAX_LENGTH = 20;
 
 var registry = require( '../../lib/registry' ),
@@ -28,13 +28,14 @@ exports.getIssuers = function( req, res, next ){
         query.name = new RegExp( search, 'i' );
 
     Issuer.find( query, null, {
-        limit: ISSUERS_LIMIT,
         sort: {cards: -1}
     }, function( error, list ){
         if ( error )
             next( error );
-        else
+        else {
+            res.set( 'Expires', new Date(Date.now() + DAY) );
             res.json( list );
+        }
     });
 };
 

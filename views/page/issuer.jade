@@ -9,7 +9,7 @@ block scripts
 block content
     form#issuer(role='form', method='POST', action=postUrl)
         .row
-            .col-md-7
+            .col-md-8
                 .panel.berry-red
                     .panel-heading Information
                     .panel-body
@@ -35,16 +35,16 @@ block content
                                 option(value=1, selected=priority === 1) high
                                 option(value=0, selected=priority === 0 || !priority) normal
                                 option(value=-1, selected=priority === -1) low
-            .col-md-5
+            .col-md-4
                 .panel.orange
                     .panel-heading Card types
+                    ul.list-group
+                        each cardType, index in cardTypes
+                            - var url = formatUrl(route.CARD_TYPE_PAGE, {id: cardType._id})
+                            li.list-group-item
+                                a(href=url)= cardType.name
                     .panel-body
                         #card-types
-                            ol
-                                each cardType, index in cardTypes
-                                    - var url = formatUrl(route.CARD_TYPE_PAGE, {id: cardType._id})
-                                    li.card-type
-                                        a(href=url)= cardType.name
 
                         button#add-type.btn.btn-default Add card type
 
