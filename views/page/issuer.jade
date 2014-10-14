@@ -9,32 +9,44 @@ block scripts
 block content
     form#issuer(role='form', method='POST', action=postUrl)
         .row
-            .col-md-6
-                h3 Information
-                .form-group#issuer-name-container
-                    label(for='issuer-name') Name
-                    input#issuer-name.form-control(type='text', name='name', value=name)
-                .form-group
-                    label(for='issuer-desc') Description
-                    input#issuer-desc.form-control(type='text', name='description', value=description)
-                .form-group
-                    label(for='issuer-url') Web site URL
-                    input#issuer-url.form-control(type='text', name='url', value=url)
-                .form-group
-                    label(for='issuer-phone') Phone number
-                    input#issuer-phone.form-control(type='text', name='phone', value=phone)
-                .form-group
-                    label(for='issuer-address') Address
-                    textarea#issuer-address.form-control(name='address')= address
-            .col-md-6
-                h3 Card types
-                #card-types
-                    each cardType, index in cardTypes
-                        - var url = formatUrl(route.CARD_TYPE_PAGE, {id: cardType._id})
-                        .card-type
-                            a(href=url)= cardType.name
+            .col-md-7
+                .panel.berry-red
+                    .panel-heading Information
+                    .panel-body
+                        .form-group#issuer-name-container
+                            label(for='issuer-name') Name
+                            input#issuer-name.form-control(type='text', name='name', value=name)
+                        .form-group
+                            label(for='issuer-desc') Description
+                            textarea#issuer-desc.form-control(name='description')= description
+                        .form-group
+                            label(for='issuer-url') Web site URL
+                            input#issuer-url.form-control(type='text', name='url', value=url)
+                        .form-group
+                            label(for='issuer-phone') Phone number
+                            input#issuer-phone.form-control(type='text', name='phone', value=phone)
+                        .form-group
+                            label(for='issuer-address') Address
+                            textarea#issuer-address.form-control(name='address')= address
+                        .form-group
+                            label(for='issuer-priority') Issuer priority
+                            select#issuer-priority.form-control(name='priority')
+                                option(value=2, selected=priority === 2) very high
+                                option(value=1, selected=priority === 1) high
+                                option(value=0, selected=priority === 0 || !priority) normal
+                                option(value=-1, selected=priority === -1) low
+            .col-md-5
+                .panel.orange
+                    .panel-heading Card types
+                    .panel-body
+                        #card-types
+                            ol
+                                each cardType, index in cardTypes
+                                    - var url = formatUrl(route.CARD_TYPE_PAGE, {id: cardType._id})
+                                    li.card-type
+                                        a(href=url)= cardType.name
 
-                button#add-type.btn.btn-default Add card type
+                        button#add-type.btn.btn-default Add card type
 
         .row
             .col-md-12.center.offset-top

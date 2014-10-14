@@ -11,6 +11,7 @@ $( function(){
         cardTypesEl = $( '#card-types' ),
         addCardTypeEl = $( '#add-type' ),
         issuerAddress = $( '#issuer-address' ),
+        issuerDesc = $( '#issuer-desc' ),
         index = 100;
 
     addCardType();
@@ -34,7 +35,9 @@ $( function(){
 
 
     issuerAddress.keyup( stretchTextArea );
+    issuerDesc.keyup( stretchTextArea );
     stretchTextArea.call( issuerAddress[0] );
+    stretchTextArea.call( issuerDesc[0] );
 
 
     function addCardType( focus ){
@@ -58,8 +61,6 @@ $( function(){
         var e = $( this ),
             scrollHeight = this.scrollHeight,
             height = e.innerHeight();
-
-        console.log(height, scrollHeight);
 
         if ( height < MAX_TEXTAREA_HEIGHT && scrollHeight > height )
             e.height( scrollHeight );

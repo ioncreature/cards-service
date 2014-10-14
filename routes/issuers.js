@@ -136,6 +136,7 @@ exports.getIssuer = function( req, res, next ){
                             url: issuer.url,
                             phone: issuer.phone,
                             address: issuer.address,
+                            priority: issuer.priority || 0,
                             cardTypes: cardTypes || [],
                             submitCaption: 'Update issuer'
                         });
@@ -150,12 +151,14 @@ exports.getIssuer = function( req, res, next ){
 exports.updateIssuer = function( req, res, next ){
     var id = req.params.id,
         accountId = req.session.user._id,
+        priority = Number( req.body.priority ),
         issuerData = {
             name: filterString( req.body.name ),
             description: filterString( req.body.description ),
             url: filterString( req.body.url ),
             phone: filterString( req.body.phone ),
-            address: filterString( req.body.address )
+            address: filterString( req.body.address ),
+            priority: isNaN( priority ) ? Issuer.NORMAL : Math.min( Math.max(priority, Issuer.LOW), Issuer.VERY_HIGH )
         },
         cardTypes = (req.body.cardType || [])
             .filter( function( cardType ){
