@@ -19,7 +19,8 @@ var router = require( 'express' ).Router(),
     ObjectId = db.ObjectId,
     userApi = require( './api/user' ),
     issuerApi = require( './api/issuer' ),
-    cardApi = require( './api/card' );
+    cardApi = require( './api/card' ),
+    placeApi = require( './api/place' );
 
 module.exports = router;
 
@@ -44,43 +45,7 @@ router.get( route.ISSUER, issuerApi.getIssuer );
 router.get( route.ISSUERS, issuerApi.getIssuers );
 router.get( route.ISSUER_IMAGE, issuerApi.getIssuerImage );
 router.get( route.ISSUER_CARD_TYPES, issuerApi.getIssuerCardTypes );
-
-
-router.use( role.isAuthorized( function( req, res, next ){
-    var e = new Error( 'Forbidden' );
-    e.status = 403;
-    next( e );
-}));
-
-
-router.get( route.USERS, userApi.getUsers );
-
-
-router.get( route.ISSUERS, function( req, res, next ){
-    var sort = String( req.query.sort || '' ),
-        search = String( req.query.search || '' ),
-        conditions = {},
-        options = {limit: 10};
-
-    if ( sort ){
-        var sortField = sort.split( ',' )[0],
-            order = sort.split( ',' )[1];
-        if ( sortField ){
-            options.sort = {};
-            options.sort[sortField] = order === 'DESC' ? -1 : 1;
-        }
-    }
-
-    if ( search )
-        conditions.name = new RegExp( search, 'i' );
-
-    Issuer.find( conditions, null, options, function( error, docs ){
-        if ( error )
-            next( error );
-        else
-            res.json( docs );
-    });
-});
+router.get( route.PLACES, placeApi.getPlacesNear );
 
 
 router.get( route.CARD_TYPES, function( req, res, next ){
@@ -129,6 +94,16 @@ router.get( route.CARD_TYPE_PREVIEW_FRONT, function( req, res, next ){
     else
         next( new Error('Incorrect card type ID "' + util.stripTags(id) + '"') );
 });
+
+
+router.use( role.isAuthorized( function( req, res, next ){
+    var e = new Error( 'Forbidden' );
+    e.status = 403;
+    next( e );
+}));
+
+
+router.get( route.USERS, userApi.getUsers );
 
 
 router.use( function( req, res, next ){

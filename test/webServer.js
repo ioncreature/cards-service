@@ -25,4 +25,5 @@ describe( 'web server', function(){
     require( './webServer/pages' );
     require( './webServer/userApi' );
     require( './webServer/issuerApi' );
+    require( './webServer/placeApi' );
 });

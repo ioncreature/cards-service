@@ -21,15 +21,28 @@ var registry = require( '../../lib/registry' ),
 
 
 exports.getIssuers = function( req, res, next ){
-    var search = req.query.search && req.query.search.trim().substr( 0, SEARCH_STRING_MAX_LENGTH ),
-        query = {};
+    var sort = String( req.query.sort || '' ),
+        search = req.query.search && req.query.search.trim().substr( 0, SEARCH_STRING_MAX_LENGTH ),
+        limit = Number( req.query.limit ),
+        query = {},
+        options = {sort: {cards: -1}};
+
+    if ( sort ){
+        var sortField = sort.split( ',' )[0],
+            order = sort.split( ',' )[1];
+        if ( sortField ){
+            options.sort = {};
+            options.sort[sortField] = order === 'DESC' ? -1 : 1;
+        }
+    }
 
     if ( search )
         query.name = new RegExp( search, 'i' );
 
-    Issuer.find( query, null, {
-        sort: {cards: -1}
-    }, function( error, list ){
+    if ( !isNaN(limit) && limit > 0 )
+        options.limit = limit;
+
+    Issuer.find( query, null, options, function( error, list ){
         if ( error )
             next( error );
         else {
