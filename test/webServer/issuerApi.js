@@ -50,6 +50,7 @@ describe( 'Issuer API', function(){
                     expect( iss.name ).to.equal( issuer.name );
                     expect( iss._id ).to.equal( issuer._id );
                     expect( iss.cardTypes ).to.be.instanceof( Array );
+                    expect( iss.places ).to.be.instanceof( Array );
                     done();
                 }
             });
@@ -76,6 +77,16 @@ describe( 'Issuer API', function(){
                     done();
                 }
             });
+    });
+
+
+    it( 'should return issuer places list', function( done ){
+        request( app )
+            .get( route.API_PREFIX + util.formatUrl(route.ISSUER_PLACES, {id: issuer._id}) )
+            .set( 'Cookie', registry.get('cookie') )
+            .expect( 200 )
+            .accept( 'json' )
+            .end( done );
     });
 
 

@@ -45,6 +45,7 @@ router.get( route.ISSUER, issuerApi.getIssuer );
 router.get( route.ISSUERS, issuerApi.getIssuers );
 router.get( route.ISSUER_IMAGE, issuerApi.getIssuerImage );
 router.get( route.ISSUER_CARD_TYPES, issuerApi.getIssuerCardTypes );
+router.get( route.ISSUER_PLACES, issuerApi.getIssuerPlaces );
 router.get( route.PLACES, placeApi.getPlacesNear );
 
 

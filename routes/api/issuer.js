@@ -16,6 +16,7 @@ var registry = require( '../../lib/registry' ),
     Issuer = db.Issuer,
     CardType = db.CardType,
     Card = db.Card,
+    Place = db.Place,
     File = db.File,
     ObjectId = db.ObjectId;
 
@@ -63,6 +64,9 @@ exports.getIssuer = function( req, res, next ){
             },
             types: function( cb ){
                 CardType.find( {issuerId: id}, cb );
+            },
+            places: function( cb ){
+                Place.find( {issuerId: id}, cb );
             }
         }, function( error, result ){
             var issuer = result.issuer;
@@ -74,9 +78,10 @@ exports.getIssuer = function( req, res, next ){
                 next( e );
             }
             else {
-                var iss = issuer.toObject();
-                iss.cardTypes = result.types || [];
-                res.json( iss );
+                var i = issuer.toObject();
+                i.cardTypes = result.types || [];
+                i.places = result.places || [];
+                res.json( i );
             }
         });
     else
@@ -122,6 +127,21 @@ exports.getIssuerCardTypes = function( req, res, next ){
 
     if ( ObjectId.isValid(id) )
         CardType.find( {issuerId: id}, function( error, list ){
+            if ( error )
+                next( error );
+            else
+                res.json( list || [] );
+        });
+    else
+        next( new Error('Invalid issuer id') );
+};
+
+
+exports.getIssuerPlaces = function( req, res, next ){
+    var id = req.params.id;
+
+    if ( ObjectId.isValid(id) )
+        Place.find( {issuerId: id}, function( error, list ){
             if ( error )
                 next( error );
             else
