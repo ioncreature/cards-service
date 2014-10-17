@@ -32,7 +32,6 @@ exports.getPlacesNear = function( req, res, next ){
         conditions.issuerId = issuerId;
 
     if ( isNaN(lng) || isNaN(lat) ){
-
         var e = new Error( 'Incorrect lng or lat parameters' );
         e.status = 400;
         next( e );
@@ -64,4 +63,4 @@ exports.getPlacesNear = function( req, res, next ){
 
 function bounds( val, min, max ){
     return Math.max( min, Math.min(max, val) );
-};
+}

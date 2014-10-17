@@ -12,11 +12,18 @@ var util = require( '../../lib/util' ),
     mime = require( 'mime' ),
     fs = require( 'fs' ),
     registry = require( '../../lib/registry' ),
+    config = registry.get( 'config' ),
     db = registry.get( 'db' ),
     Card = db.Card,
     User = db.User,
     File = db.File,
-    ObjectId = db.ObjectId;
+    ObjectId = db.ObjectId,
+    Matcher = require( '../../lib/Matcher' ),
+    matcher;
+
+
+if ( config.matcher )
+    matcher = new Matcher( config.kuznech );
 
 
 exports.getCards = function( req, res, next ){
@@ -68,7 +75,7 @@ exports.createCard = function( req, res, next ){
     else if ( !ObjectId.isValid(userId) )
         next( new Error('User id is invalid') );
     else
-        User.findOne( new ObjectId(userId), function( error, user ){
+        User.findById( userId, function( error, user ){
             if ( error || !user )
                 next( error || new Error('User not found') );
             else {
@@ -85,19 +92,39 @@ exports.createCard = function( req, res, next ){
                 if ( !files.imgBack && !files.imgFront )
                     next( new Error('Required at least one of imgBack or imgFront parameters') );
                 else {
-                    if ( files.imgBack )
-                        queries.imgBack = saveFile( files.imgBack, userId );
                     if ( files.imgFront )
                         queries.imgFront = saveFile( files.imgFront, userId );
+                    if ( files.imgBack )
+                        queries.imgBack = saveFile( files.imgBack, userId );
+
+                    if ( matcher && files.imgFront && files.imgBack )
+                        queries.match = function( cb ){
+                            matcher.match( files.imgFront.path, files.imgBack.path, function( error, result ){
+                                if ( error )
+                                    console.error( error );
+                                cb( null, result );
+                            });
+                        };
+
                     delete req.files;
                     async.parallel( queries, function( error, result ){
                         if ( error )
                             next( error );
                         else {
-                            if ( result.imgBack )
-                                cardData.imgBackId = result.imgBack[0]._id;
-                            if ( result.imgFront )
+                            if ( result.imgFront ){
+                                removeFile( files.imgFront );
                                 cardData.imgFrontId = result.imgFront[0]._id;
+                            }
+                            if ( result.imgBack ){
+                                removeFile( files.imgBack );
+                                cardData.imgBackId = result.imgBack[0]._id;
+                            }
+                            if ( result.match ){
+                                if ( result.match.issuerId && ObjectId.isValid(result.match.issuerId) )
+                                    cardData.issuerId = new ObjectId( result.match.issuerId );
+                                if ( result.match.typeId && ObjectId.isValid(result.match.typeId) )
+                                    cardData.typeId = new ObjectId( result.match.typeId );
+                            }
 
                             var card = new Card;
                             card.set( cardData );
@@ -191,7 +218,11 @@ function saveFile( fileDesc, id ){
             fileSize: data.length,
             linkedEntity: id || undefined
         });
-        fs.unlinkSync( fileDesc.path );
         file.save( cb );
     };
+}
+
+
+function removeFile( fileDesc ){
+    fs.unlink( fileDesc.path, util.noop );
 }

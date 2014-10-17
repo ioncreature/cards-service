@@ -11,7 +11,7 @@ var program = require( 'commander' ),
 
 program
     .option( '-c, --config [name]', 'set the config name to use, default is "test"', 'test' )
-    .option( '--name [<name]', 'set place name', 'Somewhere in Saint-Petersburg' )
+    .option( '--name [name]', 'set place name', 'Somewhere in Saint-Petersburg' )
     .option( '--longitude [longitude]', 'set longitude', 30 + Math.random() )
     .option( '--latitude [latitude]', 'set latitude', 59 + Math.random() );
 

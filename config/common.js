@@ -80,3 +80,15 @@ exports.acl = {
         'edit issuer'
     ]}
 };
+
+exports.matcher = false;
+
+exports.kuznech = {
+    url: 'http://koshelek.kuznech.com',
+    route: {
+        SEND_CARD: '/card/search',
+        UPDATE_CARD: '/card/:issuerId/:typeId'
+    }
+};
+
+

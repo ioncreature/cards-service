@@ -15,3 +15,5 @@ exports.mongodb = [
         dbname: 'cardsDev'
     }
 ];
+
+exports.matcher = true;

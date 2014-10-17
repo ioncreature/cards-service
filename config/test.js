@@ -20,3 +20,5 @@ exports.auth = {
     login: 'admin',
     password: 'synqera'
 };
+
+exports.matcher = false;
