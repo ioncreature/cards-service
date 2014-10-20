@@ -147,6 +147,7 @@ describe( 'User API', function(){
             .get( util.formatUrl(route.API_PREFIX + route.USER_CARDS, {id: user._id}) )
             .set( 'Cookie', registry.get('cookie') )
             .accept( 'json' )
+            .expect( 200 )
             .end( function( error, res ){
                 if ( error )
                     done( error );
@@ -154,6 +155,56 @@ describe( 'User API', function(){
                     var list = res.body;
                     expect( list.some(function( item ){
                         return item._id === card._id;
+                    })).to.be.true;
+                    done();
+                }
+            });
+    });
+
+
+    it( 'should update card number', function( done ){
+        var number = '123123';
+        request( app )
+            .post( util.formatUrl(route.API_PREFIX + route.CARD, {id: card._id}) )
+            .send( {number: number} )
+            .set( 'Cookie', registry.get('cookie') )
+            .expect( 200 )
+            .accept( 'json' )
+            .end( function( error, res ){
+                if ( error )
+                    done( error );
+                else {
+                    var card = res.body;
+                    expect( card.number ).to.equal( number );
+                    done();
+                }
+            });
+    });
+
+
+    it( 'should remove card', function( done ){
+        request( app )
+            .del( util.formatUrl(route.API_PREFIX + route.CARD, {id: card._id}) )
+            .set( 'Cookie', registry.get('cookie') )
+            .expect( 200 )
+            .accept( 'json' )
+            .end( done );
+    });
+
+
+    it( 'should return list of user cards without previously removed', function( done ){
+        request( app )
+            .get( util.formatUrl(route.API_PREFIX + route.USER_CARDS, {id: user._id}) )
+            .set( 'Cookie', registry.get('cookie') )
+            .expect( 200 )
+            .accept( 'json' )
+            .end( function( error, res ){
+                if ( error )
+                    done( error );
+                else {
+                    var list = res.body;
+                    expect( list.every(function( item ){
+                        return item._id !== card._id;
                     })).to.be.true;
                     done();
                 }

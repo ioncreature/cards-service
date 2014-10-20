@@ -15,6 +15,7 @@ var util = require( '../../lib/util' ),
     config = registry.get( 'config' ),
     db = registry.get( 'db' ),
     Card = db.Card,
+    CardType = db.CardType,
     User = db.User,
     File = db.File,
     ObjectId = db.ObjectId,
@@ -139,6 +140,57 @@ exports.createCard = function( req, res, next ){
                 }
             }
         });
+};
+
+
+exports.removeCard = function( req, res, next ){
+    var id = req.params.id;
+
+    if ( ObjectId.isValid(id) )
+        Card.findByIdAndRemove( id, function( error ){
+            if ( error )
+                next( error );
+            else
+                res.json( 'ok' );
+        });
+    else
+        next( new Error('Card id is invalid') );
+};
+
+
+exports.updateCard = function( req, res, next ){
+    var id = req.params.id,
+        typeId = req.body.typeId,
+        issuerId = req.body.issuerId,
+        number = Number( req.body.number );
+
+    if ( ObjectId.isValid(id) ){
+        Card.findById( id, function( error, card ){
+            if ( error )
+                next( error );
+            else if ( !card ){
+                var e = new Error( 'Card not found' );
+                e.status = 404;
+                next( e );
+            }
+            else {
+                if ( issuerId && ObjectId.isValid(issuerId) )
+                    card.issuerId = new ObjectId( issuerId );
+                if ( typeId && ObjectId.isValid( typeId ) )
+                    card.typeId = new ObjectId( typeId );
+                if ( !isNaN(number) )
+                    card.number = number;
+                card.save( function( error ){
+                    if ( error )
+                        next( error );
+                    else
+                        res.json( card );
+                });
+            }
+        });
+    }
+    else
+        next( new Error('Card id is invalid') );
 };
 
 

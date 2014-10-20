@@ -40,6 +40,8 @@ router.get( route.CARDS, cardApi.getCards );
 router.post( route.CARDS, cardApi.createCard );
 router.get( route.CARD_IMAGE, cardApi.getPhoto );
 router.get( route.CARD, cardApi.getCard );
+router.post( route.CARD, cardApi.updateCard );
+router.delete( route.CARD, cardApi.removeCard );
 router.get( route.FILE, cardApi.getFile );
 router.get( route.ISSUER, issuerApi.getIssuer );
 router.get( route.ISSUERS, issuerApi.getIssuers );
