@@ -166,6 +166,7 @@ describe( 'User API', function(){
         var number = '123123';
         request( app )
             .post( util.formatUrl(route.API_PREFIX + route.CARD, {id: card._id}) )
+            .query( {userId: user._id} )
             .send( {number: number} )
             .set( 'Cookie', registry.get('cookie') )
             .expect( 200 )
@@ -185,6 +186,7 @@ describe( 'User API', function(){
     it( 'should remove card', function( done ){
         request( app )
             .del( util.formatUrl(route.API_PREFIX + route.CARD, {id: card._id}) )
+            .query( {userId: user._id} )
             .set( 'Cookie', registry.get('cookie') )
             .expect( 200 )
             .accept( 'json' )

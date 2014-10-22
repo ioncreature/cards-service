@@ -144,17 +144,34 @@ exports.createCard = function( req, res, next ){
 
 
 exports.removeCard = function( req, res, next ){
-    var id = req.params.id;
+    var id = req.params.id,
+        userId = req.query.userId;
 
-    if ( ObjectId.isValid(id) )
-        Card.findByIdAndRemove( id, function( error ){
+    if ( ObjectId.isValid(id) && ObjectId.isValid(userId) )
+        Card.findById( id, function( error, card ){
+            var e;
             if ( error )
                 next( error );
+            else if ( !card ){
+                e = new Error( 'Card not found' );
+                e.status = 404;
+                next( e );
+            }
+            else if ( String(card.userId) !== userId ){
+                e = new Error( 'Forbidden' );
+                e.status = 403;
+                next( e );
+            }
             else
-                res.json( 'ok' );
+                Card.findByIdAndRemove( id, function( error ){
+                    if ( error )
+                        next( error );
+                    else
+                        res.json( 'ok' );
+                });
         });
     else
-        next( new Error('Card id is invalid') );
+        next( new Error('Card or user id is invalid') );
 };
 
 
