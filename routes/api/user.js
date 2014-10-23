@@ -8,6 +8,7 @@ const DEFAULT_LIMIT = 100;
 var registry = require( '../../lib/registry' ),
     async = require( 'async' ),
     util = require( '../../lib/util' ),
+    httpError = require( '../../lib/http-error' ),
     route = registry.get( 'config' ).route,
     db = registry.get( 'db' ),
     User = db.User,
@@ -54,16 +55,13 @@ exports.getUser = function( req, res, next ){
         User.findById( id, function( error, user ){
             if ( error )
                 next( error );
-            else if ( !user ){
-                var e = new Error( 'User not found' );
-                e.status = 404;
-                next( e );
-            }
+            else if ( !user )
+                next( new httpError.NotFound );
             else
                 res.json( user );
         });
     else
-        next( new Error('User id is invalid') );
+        next( new httpError.BadRequest('User id is invalid') );
 };
 
 
@@ -78,6 +76,6 @@ exports.getUserCards = function( req, res, next ){
                 res.json( list );
         });
     else
-        next( new Error('User id is invalid') );
+        next( new httpError.BadRequest('User id is invalid') );
 };
 
