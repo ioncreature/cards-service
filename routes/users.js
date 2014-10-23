@@ -7,6 +7,7 @@
 var registry = require( '../lib/registry' ),
     route = registry.get( 'config' ).route,
     util = require( '../lib/util' ),
+    httpError = require( '../lib/http-error' ),
     db = registry.get( 'db' ),
     User = db.User,
     Card = db.Card,
@@ -34,7 +35,7 @@ exports.getUser = function( req, res ){
             if ( error )
                 next( error );
             else if ( !user )
-                next( new Error('User with ID "' + util.stripTags(id) + '" not found') );
+                next( new httpError.NotFound );
             else
                 Card.find( {userId: user._id}, function( error, cards ){
                     if ( error )
@@ -50,5 +51,5 @@ exports.getUser = function( req, res ){
                 });
         });
     else
-        next( new Error('Invalid user ID "' + util.stripTags(id) + '"') );
+        next( new httpError.BadRequest('Invalid user id') );
 };

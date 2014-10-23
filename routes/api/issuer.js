@@ -10,6 +10,7 @@ const
 var registry = require( '../../lib/registry' ),
     async = require( 'async' ),
     util = require( '../../lib/util' ),
+    httpError = require( '../../lib/http-error' ),
     mime = require( 'mime' ),
     route = registry.get( 'config' ).route,
     db = registry.get( 'db' ),
@@ -72,11 +73,8 @@ exports.getIssuer = function( req, res, next ){
             var issuer = result.issuer;
             if ( error )
                 next( error );
-            else if ( !issuer ){
-                var e = new Error( 'Issuer not found' );
-                e.status = 404;
-                next( e );
-            }
+            else if ( !issuer )
+                next( new httpError.NotFound );
             else {
                 var i = issuer.toObject();
                 i.cardTypes = result.types || [];
@@ -85,7 +83,7 @@ exports.getIssuer = function( req, res, next ){
             }
         });
     else
-        next( new Error('Invalid issuer id') );
+        next( new httpError.BadRequest('Invalid issuer id') );
 };
 
 
@@ -96,20 +94,14 @@ exports.getIssuerImage = function( req, res, next ){
         Card.findOne( {issuerId: id}, function( error, card ){
             if ( error )
                 next( error );
-            else if ( !card || !card.imgFrontId ){
-                var e = new Error( 'Not found' );
-                e.status = 404;
-                next( e );
-            }
+            else if ( !card || !card.imgFrontId )
+                next( new httpError.NotFound );
             else
                 File.findById( card.imgFrontId, function( error, file ){
                     if ( error )
                         next( error );
-                    if ( !file ){
-                        e = new Error( 'Not found' );
-                        e.status = 404;
-                        next( e );
-                    }
+                    if ( !file )
+                        next( new httpError.NotFound );
                     else {
                         res.type( file.mimeType || mime.lookup(file.name) );
                         res.set( 'Content-Disposition', 'filename="' + file.name + '"' );
@@ -118,7 +110,7 @@ exports.getIssuerImage = function( req, res, next ){
                 });
         });
     else
-        next( new Error('Invalid issuer id') );
+        next( new httpError.BadRequest('Invalid issuer id') );
 };
 
 
@@ -133,7 +125,7 @@ exports.getIssuerCardTypes = function( req, res, next ){
                 res.json( list || [] );
         });
     else
-        next( new Error('Invalid issuer id') );
+        next( new httpError.BadRequest('Invalid issuer id') );
 };
 
 
@@ -148,5 +140,5 @@ exports.getIssuerPlaces = function( req, res, next ){
                 res.json( list || [] );
         });
     else
-        next( new Error('Invalid issuer id') );
+        next( new httpError.BadRequest('Invalid issuer id') );
 };

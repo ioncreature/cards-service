@@ -12,6 +12,7 @@ var registry = require( '../lib/registry' ),
     qs = require( 'qs' ),
     db = registry.get( 'db' ),
     async = require( 'async' ),
+    httpError = require( '../lib/http-error' ),
     util = require( '../lib/util' ),
     Card = db.Card,
     CardType = db.CardType,
@@ -121,7 +122,7 @@ exports.getIssuer = function( req, res, next ){
             if ( error )
                 next( error );
             else if ( !issuer )
-                next( new Error('Issuer with ID ' + id + ' not found') );
+                next( new httpError.NotFound );
             else
                 CardType.find( {issuerId: issuer._id}, function( error, cardTypes ){
                     if ( error )
@@ -144,7 +145,7 @@ exports.getIssuer = function( req, res, next ){
         });
     }
     else
-        next( new Error('Incorrect Issuer ID ' + id) )
+        next( new httpError.BadRequest('Invalid issuer id') );
 };
 
 
@@ -177,7 +178,7 @@ exports.updateIssuer = function( req, res, next ){
             if ( error )
                 next( error );
             else if ( !issuer )
-                next( new Error('Issuer not found') );
+                next( new httpError.NotFound );
             else
                 async.series({
                     update: function( cb ){
@@ -200,7 +201,7 @@ exports.updateIssuer = function( req, res, next ){
         });
     }
     else
-        next( new Error('Incorrect Issuer ID ' + id) )
+        next( new httpError.BadRequest('Invalid issuer id') )
 };
 
 
@@ -211,11 +212,8 @@ exports.getCardType = function( req, res, next ){
         CardType.findById( id, function( error, type ){
             if ( error )
                 next( error );
-            else if ( !type ){
-                var e = new Error( 'Card type not found' );
-                e.status = 404;
-                next( error );
-            }
+            else if ( !type )
+                next( new httpError.NotFound );
             else {
                 async.parallel({
                     issuer: function( cb ){
@@ -227,11 +225,8 @@ exports.getCardType = function( req, res, next ){
                 }, function( error, result ){
                     if ( error )
                         next( error );
-                    else if ( !result.issuer ){
-                        var e = new Error( 'Issuer of this type of card not found' );
-                        e.status = 404;
-                        next( e );
-                    }
+                    else if ( !result.issuer )
+                        next( new httpError.NotFound('Issuer of this type of card not found') );
                     else {
                         res.render( 'page/card-type', {
                             pageName: 'issuers',
@@ -246,7 +241,7 @@ exports.getCardType = function( req, res, next ){
         });
     }
     else
-        next( new Error('Card type id is invalid') );
+        next( new httpError.BadRequest('Invalid card type id') );
 };
 
 
@@ -258,11 +253,8 @@ exports.updateCardType = function( req, res, next ){
         CardType.findById( id, function( error, type ){
             if ( error )
                 next( error );
-            else if ( !type ){
-                var e = new Error( 'Card type not found' );
-                e.status = 404;
-                next( e );
-            }
+            else if ( !type )
+                next( new httpError.NotFound );
             else {
                 var prevData = type.toObject();
                 type.name = util.stripTags( req.body.name );
@@ -296,9 +288,7 @@ exports.updateCardType = function( req, res, next ){
         });
     }
     else
-        next( new Error('Invalid card type id') );
-
-
+        next( new httpError.BadRequest('Invalid card type id') );
 };
 
 

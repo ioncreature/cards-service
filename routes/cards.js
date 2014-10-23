@@ -10,6 +10,7 @@ const
 var registry = require( '../lib/registry' ),
     fs = require( 'fs' ),
     async = require( 'async' ),
+    httpError = require( '../lib/http-error' ),
     qs = require( 'qs' ),
     util = require( '../lib/util' ),
     route = registry.get( 'config' ).route,
@@ -93,7 +94,7 @@ exports.getCard = function( req, res, next ){
             if ( error )
                 next( error );
             else if ( !card )
-                next( new Error('Card with ID ' + id + ' not found') );
+                next( new httpError.NotFound );
             else {
                 res.render( 'page/card', {
                     pageName: 'cards',
@@ -119,7 +120,7 @@ exports.getCard = function( req, res, next ){
         });
     }
     else
-        next( new Error('Card ID "' + util.stripTags(id) + '" is invalid') );
+        next( new httpError.BadRequest('Card id is invalid') );
 };
 
 
@@ -177,7 +178,7 @@ exports.validateCard = function( req, res, next ){
             };
         }
         else
-            error = new Error( 'Invalid issuer ID' );
+            error = new httpError.BadRequest( 'Invalid issuer id' );
     }
 
     if ( newTypeName ){
@@ -205,7 +206,7 @@ exports.validateCard = function( req, res, next ){
             };
         }
         else
-            error = new Error( 'Invalid card type ID "' + util.stripTags(issuerId) + '"' );
+            error = new httpError.BadRequest( 'Invalid card type id' );
     }
 
     if ( error )
@@ -276,7 +277,7 @@ exports.updateCard = function( req, res, next ){
             if ( error )
                 next( error );
             else if ( !card )
-                next( new Error('Card not found') );
+                next( new httpError.NotFound );
             else {
                 var prevIssuerId = card.issuerId,
                     wasFull = card.isFull(),
@@ -321,7 +322,7 @@ exports.updateCard = function( req, res, next ){
         });
     }
     else
-        next( new Error('Invalid ID "' + util.stripTags(id)) );
+        next( new httpError.BadRequest('Invalid card id') );
 };
 
 

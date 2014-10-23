@@ -11,6 +11,7 @@ var util = require( '../../lib/util' ),
     async = require( 'async' ),
     mime = require( 'mime' ),
     fs = require( 'fs' ),
+    httpError = require( '../../lib/http-error' ),
     registry = require( '../../lib/registry' ),
     config = registry.get( 'config' ),
     db = registry.get( 'db' ),
@@ -50,17 +51,14 @@ exports.getCard = function( req, res, next ){
         Card.findById( id, function( error, card ){
             if ( error )
                 next( error );
-            else if ( !card ){
-                var e = new Error( 'Card not found' );
-                e.status = 404;
-                next( e );
-            }
+            else if ( !card )
+                next( new httpError.NotFound );
             else
                 res.json( card );
         });
     }
     else
-        next( new Error('Card id is invalid') );
+        next( new httpError.BadRequest('Card id is invalid') );
 };
 
 
@@ -72,13 +70,13 @@ exports.createCard = function( req, res, next ){
         queries = {};
 
     if ( !userId )
-        next( new Error('userId is required') );
+        next( new httpError.BadRequest('userId is required') );
     else if ( !ObjectId.isValid(userId) )
-        next( new Error('User id is invalid') );
+        next( new httpError.BadRequest('User id is invalid') );
     else
         User.findById( userId, function( error, user ){
             if ( error || !user )
-                next( error || new Error('User not found') );
+                next( error || new httpError.NotFound('User not found') );
             else {
                 cardData.userId = user._id;
                 cardData.description = b.description || '';
@@ -91,7 +89,7 @@ exports.createCard = function( req, res, next ){
                     cardData.typeId = b.typeId;
 
                 if ( !files.imgBack && !files.imgFront )
-                    next( new Error('Required at least one of imgBack or imgFront parameters') );
+                    next( new httpError.BadRequest('Required at least one of imgBack or imgFront parameters') );
                 else {
                     if ( files.imgFront )
                         queries.imgFront = saveFile( files.imgFront, userId );
@@ -152,16 +150,10 @@ exports.removeCard = function( req, res, next ){
             var e;
             if ( error )
                 next( error );
-            else if ( !card ){
-                e = new Error( 'Card not found' );
-                e.status = 404;
-                next( e );
-            }
-            else if ( String(card.userId) !== userId ){
-                e = new Error( 'Forbidden' );
-                e.status = 403;
-                next( e );
-            }
+            else if ( !card )
+                next( new httpError.NotFound );
+            else if ( String(card.userId) !== userId )
+                next( new httpError.Forbidden );
             else
                 Card.findByIdAndRemove( id, function( error ){
                     if ( error )
@@ -171,7 +163,7 @@ exports.removeCard = function( req, res, next ){
                 });
         });
     else
-        next( new Error('Card or user id is invalid') );
+        next( new httpError.BadRequest('Card or user id is invalid') );
 };
 
 
@@ -185,11 +177,8 @@ exports.updateCard = function( req, res, next ){
         Card.findById( id, function( error, card ){
             if ( error )
                 next( error );
-            else if ( !card ){
-                var e = new Error( 'Card not found' );
-                e.status = 404;
-                next( e );
-            }
+            else if ( !card )
+                next( new httpError.NotFound );
             else {
                 if ( issuerId && ObjectId.isValid(issuerId) )
                     card.issuerId = new ObjectId( issuerId );
@@ -207,7 +196,7 @@ exports.updateCard = function( req, res, next ){
         });
     }
     else
-        next( new Error('Card id is invalid') );
+        next( new httpError.BadRequest('Card id is invalid') );
 };
 
 
@@ -218,28 +207,18 @@ exports.getPhoto = function( req, res, next ){
     if ( ObjectId.isValid(id) ){
         id = new ObjectId( id );
         Card.findById( id, field, function( error, card ){
-            var e;
             if ( error )
                 next( error );
-            else if ( !card ){
-                e = new Error( 'Card with ID "' + util.stripTags( id ) + '" not found' );
-                e.status = 404;
-                next( e );
-            }
-            else if ( !card[field] ){
-                e = new Error( 'Card with ID "' + util.stripTags( id ) + '" does not have and image' );
-                e.status = 404;
-                next( e );
-            }
+            else if ( !card )
+                next( new httpError.NotFound('Card with ID "' + util.stripTags(id) + '" not found') );
+            else if ( !card[field] )
+                next( new httpError.NotFound('Card with ID "' + util.stripTags(id) + '" does not have and image') );
             else
                 File.findOne( card[field], function( error, file ){
                     if ( error )
                         next( error );
-                    else if ( !file ){
-                        e = new Error( 'File not found' );
-                        e.status = 404;
-                        next( e );
-                    }
+                    else if ( !file )
+                        next( new httpError.NotFound('File not found') );
                     else {
                         res.type( file.mimeType || mime.lookup(file.name) );
                         res.set( 'Content-Disposition', 'filename="' + file.name + '"' );
@@ -249,7 +228,7 @@ exports.getPhoto = function( req, res, next ){
         });
     }
     else
-        next( new Error('Incorrect card ID "' + util.stripTags(id) + '"') );
+        next( new httpError.BadRequest('Incorrect card ID "' + util.stripTags(id) + '"') );
 };
 
 
@@ -260,11 +239,8 @@ exports.getFile = function( req, res, next ){
         File.findById( id, function( error, file ){
             if ( error )
                 next( error );
-            else if ( !file ){
-                var e = new Error( 'File not found' );
-                e.status = 404;
-                next( e );
-            }
+            else if ( !file )
+                next( new httpError.NotFound );
             else {
                 res.type( file.mimeType || mime.lookup(file.name) );
                 res.set( 'Content-Disposition', 'filename="' + file.name + '"' );
@@ -272,7 +248,7 @@ exports.getFile = function( req, res, next ){
             }
         });
     else
-        next( new Error('File id is invalid') );
+        next( new httpError.BadRequest('File id is invalid') );
 };
 
 

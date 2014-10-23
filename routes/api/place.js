@@ -15,6 +15,7 @@ const
 
 var registry = require( '../../lib/registry' ),
     util = require( '../../lib/util' ),
+    httpError = require( '../../lib/http-error' ),
     route = registry.get( 'config' ).route,
     db = registry.get( 'db' ),
     Place = db.Place,
@@ -31,11 +32,8 @@ exports.getPlacesNear = function( req, res, next ){
     if ( issuerId && ObjectId.isValid(issuerId) )
         conditions.issuerId = issuerId;
 
-    if ( isNaN(lng) || isNaN(lat) ){
-        var e = new Error( 'Incorrect lng or lat parameters' );
-        e.status = 400;
-        next( e );
-    }
+    if ( isNaN(lng) || isNaN(lat) )
+        next( new httpError.BadRequest('Incorrect lng or lat parameters') );
     else {
         lng = bounds( lng, MIN_LNG, MAX_LNG );
         lat = bounds( lat, MIN_LAT, MAX_LAT );

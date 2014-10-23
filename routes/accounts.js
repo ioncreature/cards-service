@@ -9,6 +9,7 @@ const
 var registry = require( '../lib/registry' ),
     util = require( '../lib/util' ),
     async = require( 'async' ),
+    httpError = require( '../lib/http-error' ),
     route = registry.get( 'config' ).route,
     db = registry.get( 'db' ),
     ObjectId = db.ObjectId,
@@ -34,20 +35,14 @@ exports.getAccount = function( req, res, next ){
     var login = req.params.login,
         sessionLogin = req.session.user.login;
 
-    if ( login !== sessionLogin && !req.role.can('get accounts') ){
-        var e = new Error( 'Forbidden' );
-        e.status = 403;
-        next( e );
-    }
+    if ( login !== sessionLogin && !req.role.can('get accounts') )
+        next( new httpError.Forbidden );
     else
         Account.findOne( {login: login}, function( error, account ){
             if ( error )
                 next( error );
-            else if ( !account ){
-                var e = new Error( 'Account not found' );
-                e.status = 404;
-                next( e );
-            }
+            else if ( !account )
+                next( new httpError.NotFound );
             else
                 async.parallel({
                     activity: function( cb ){
@@ -96,7 +91,7 @@ exports.getMe = function( req, res, next ){
     if ( login )
         res.redirect( util.formatUrl(route.ACCOUNT_PAGE, {login: login}) );
     else
-        next( new Error('Session doesn\'t have user info') );
+        next( new httpError.Unauthorized('Session doesn\'t have user info') );
 };
 
 
@@ -106,20 +101,14 @@ exports.updateAccount = function( req, res, next ){
         sessionLogin = req.session.user.login,
         b = req.body;
 
-    if ( login !== sessionLogin && !role.can('edit accounts') ){
-        var e = new Error( 'Forbidden' );
-        e.status = 403;
-        next( e );
-    }
+    if ( login !== sessionLogin && !role.can('edit accounts') )
+        next( new httpError.Forbidden );
     else
         Account.findOne( {login: login}, function( error, account ){
             if ( error )
                 next( error );
-            else if ( !account ){
-                var e = new Error( 'Account not found' );
-                e.status = 404;
-                next( e );
-            }
+            else if ( !account )
+                next( new httpError.NotFound );
             else {
                 if ( b.password && b.passwordConfirm && b.password === b.passwordConfirm )
                     account.password = b.password;

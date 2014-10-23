@@ -5,6 +5,7 @@
 
 var router = require( 'express' ).Router(),
     util = require( '../lib/util' ),
+    httpError = require( '../lib/http-error' ),
     mime = require( 'mime' ),
     registry = require( '../lib/registry' ),
     config = registry.get( 'config' ),
@@ -81,11 +82,8 @@ router.get( route.CARD_TYPE_PREVIEW_FRONT, function( req, res, next ){
         Card.findOne( query, field, function( error, card ){
             if ( error )
                 next( error );
-            else if ( !card ){
-                var e = new Error( 'Card with ID "' + util.stripTags( typeId ) + '" not found' );
-                e.status = 404;
-                next( e );
-            }
+            else if ( !card )
+                next( new httpError.NotFound );
             else
                 File.findOne( card[field], function( error, file ){
                     res.type( file.mimeType || mime.lookup( file.name ) );
@@ -95,14 +93,12 @@ router.get( route.CARD_TYPE_PREVIEW_FRONT, function( req, res, next ){
         });
     }
     else
-        next( new Error('Incorrect card type ID "' + util.stripTags(id) + '"') );
+        next( new httpError.BadRequest('Invalid card type id') );
 });
 
 
 router.use( role.isAuthorized( function( req, res, next ){
-    var e = new Error( 'Forbidden' );
-    e.status = 403;
-    next( e );
+    next( new httpError.Forbidden );
 }));
 
 
@@ -110,9 +106,7 @@ router.get( route.USERS, userApi.getUsers );
 
 
 router.use( function( req, res, next ){
-    var error = new Error( 'Not Found' );
-    error.status = 404;
-    next( error );
+    next( new httpError.NotFound );
 });
 
 

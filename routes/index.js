@@ -6,6 +6,7 @@
 var router = require( 'express' ).Router(),
     registry = require( '../lib/registry' ),
     async = require( 'async' ),
+    httpError = require( '../lib/http-error' ),
     route = registry.get( 'config' ).route,
     role = registry.get( 'role' ),
     db = registry.get( 'db' ),
@@ -151,7 +152,5 @@ router.get( route.ACCOUNT_OWN_PAGE, accounts.getMe );
 
 
 function forbid( req, res, next ){
-    var e = new Error( 'Forbidden! You have not enough permissions' );
-    e.status = 403;
-    next( e );
+    next( new httpError.Forbidden );
 }
