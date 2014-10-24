@@ -10,11 +10,14 @@ const
 var registry = require( '../lib/registry' ),
     fs = require( 'fs' ),
     async = require( 'async' ),
+    join = require( 'path' ).join,
     httpError = require( '../lib/http-error' ),
     qs = require( 'qs' ),
     util = require( '../lib/util' ),
-    route = registry.get( 'config' ).route,
+    config = registry.get( 'config' ),
+    route = config.route,
     db = registry.get( 'db' ),
+    Matcher = require( '../lib/matcher' ),
     Card = db.Card,
     File = db.File,
     CardType = db.CardType,
@@ -22,6 +25,9 @@ var registry = require( '../lib/registry' ),
     ObjectId = db.ObjectId,
     Account = db.Account,
     Activity = db.Activity;
+
+if ( config.matcher )
+    var matcher = new Matcher( config.kuznech );
 
 
 exports.getCards = function( req, res, next ){
@@ -311,6 +317,35 @@ exports.updateCard = function( req, res, next ){
 
                         moderate && Account.addModeratedCard( accountId );
                         Activity.createByAccount( accountId, card, {moderate: moderate} );
+
+                        if ( moderate && matcher ){
+                            async.parallel({
+                                imgFront: function( cb ){
+                                    File.findById( card.imgFrontId, cb );
+                                },
+                                imgBack: function( cb ){
+                                    File.findById( card.imgBackId, cb );
+                                }
+                            }, function( error, result ){
+                                if ( error )
+                                    next( error );
+                                else {
+                                    var front = result.imgFront,
+                                        back = result.imgBack,
+                                        frontPath = join( config.uploadsDir, front._id + front.name ),
+                                        backPath = join( config.uploadsDir, back._id + back.name );
+                                    fs.writeFileSync( frontPath, front.data );
+                                    fs.writeFileSync( backPath, back.data );
+
+                                    matcher.updateCard( card.issuerId, card.typeId, frontPath, backPath, function( error, result ){
+                                        console.log( error, result );
+                                        fs.unlinkSync( frontPath );
+                                        fs.unlinkSync( backPath );
+                                    });
+                                }
+                            });
+                            matcher.updateCard();
+                        }
 
                         if ( goNextCard )
                             res.redirect( route.CARD_MODERATE );

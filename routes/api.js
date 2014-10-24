@@ -86,7 +86,7 @@ router.get( route.CARD_TYPE_PREVIEW_FRONT, function( req, res, next ){
                 next( new httpError.NotFound );
             else
                 File.findOne( card[field], function( error, file ){
-                    res.type( file.mimeType || mime.lookup( file.name ) );
+                    res.type( file.mimeType || mime.lookup(file.name) );
                     res.set( 'Content-Disposition', 'filename="' + file.name + '"' );
                     res.send( file.data );
                 });
