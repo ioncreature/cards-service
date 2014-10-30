@@ -344,7 +344,6 @@ exports.updateCard = function( req, res, next ){
                                     });
                                 }
                             });
-                            matcher.updateCard();
                         }
 
                         if ( goNextCard )
