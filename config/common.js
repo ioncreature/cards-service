@@ -8,6 +8,7 @@ exports.processTitle = 'cards-service';
 exports.uploadsDir = require( 'path' ).join( __dirname, '..', 'uploads' );
 exports.backupDir = require( 'path' ).join( __dirname, '..', 'backup' );
 exports.cookieTtl = 6 * 3600 * 1000;
+exports.proxyUsed = false;
 
 exports.route = {
     PUBLIC: '/public',
