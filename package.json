@@ -3,20 +3,20 @@
     "version": "0.0.1",
     "private": true,
     "scripts": {
-        "start": "node ./bin/www"
+        "start": "node app.js"
     },
     "dependencies": {
-        "express": "4.4.x",
+        "express": "4.10.x",
         "connect-acl": "0.2.x",
         "serve-favicon": "2.1.x",
         "mkdirp": "0.5.x",
-        "body-parser": "1.4.x",
+        "body-parser": "1.9.x",
         "multer": "0.1.x",
         "express-session": "1.7.x",
         "morgan": "1.1.x",
         "qs": "0.6.x",
-        "commander": "2.2.x",
-        "jade": "1.3.x",
+        "commander": "2.5.x",
+        "jade": "1.7.x",
         "mime": "1.2.x",
         "mocha": "1.20.x",
         "chai": "1.9.x",
